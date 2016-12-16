@@ -49,8 +49,19 @@ no problem at all).
 ## Replay phase
 As we mentioned above, aqua creates a script to capture user inputs and
 saves the state of the whole form after each modification. Using that script
-the library can replay the user interaction and compare the state of the
-system after each step.
+the library can replay the user interaction in two modes:
+
+**Debug mode**
+
+Replay the user interaction (one step a time) showing erros and notes from the 
+recording phase. This mode is meant for debugging purposes such as 
+reproduce a bug.
+
+**Assert mode**
+
+Run non stop unless it finds differences. This mode is usefull for UI 
+testing automation. For instance to run the UI test as part of the build 
+process.
 
 
 ## Why this library is uninstrusive?
