@@ -33,6 +33,18 @@ its context (the state of every other control within the form). Those frames
 are stored and can be compared to other frames during the replay phase to
 detected differences between runs.
 
+### When we capture user input
+User input is capture once the control loose it focus. In the validation/focus
+life cycle of events, this event is fired last and it will fire only if the 
+input is valid (assumig there are validations). Once the user input is captured,
+as far as Aqua concerns, the input *is* valid. (This asumption applies to 
+user input, only. Calculated values could be wrong.
+
+At this point you may wonder "But what happens if I'm also handleing 
+the LostFocus event?". The anwser is nothing. You can continuing using it as 
+long as you don't hook the handler after you called Aqua.Watch. 
+(Our handler is hooked last, so your handlers will be called first. There is 
+no problem at all).
 
 ## Replay phase
 As we mentioned above, aqua creates a script to capture user inputs and
