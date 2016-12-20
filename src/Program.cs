@@ -43,7 +43,7 @@ class Program {
 			txtTot.Text = (p * q).ToString();
 		};
 
-		//Hook handlers
+		// Hook handlers
 		txtPrice.LostFocus += (s, e) => updateTot(txtPrice, txtQty);
 		txtQty.LostFocus   += (s, e) => updateTot(txtPrice, txtQty);
 
