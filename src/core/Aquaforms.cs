@@ -14,8 +14,10 @@ public class Aquaforms {
 		f.Shown += (s, e) => {
 			ValueStore values = Init(f);
 			PrintSolidLine(); //<= Begin spanshot.
-			WriteLine("First Snapshot");
+			WriteLine("| First Snapshot");
+			PrintSolidLine(); //<= End snapshot.
 			FirstSnapshot(f, values);
+			WriteLine("|");
 			PrintSolidLine(); //<= End snapshot.
 		};
 	}
@@ -30,14 +32,14 @@ public class Aquaforms {
 
 	/// Draws a solid line to the console.
 	static void PrintSolidLine() => 
-		WriteLine("".PadRight(60, '-'));
+		WriteLine("+".PadRight(60, '-'));
 
 	/// Takes the first snapshot, which is a picture of the whole form.
 	static void FirstSnapshot(Control ctrl, ValueStore values) {
 
 		var t = ctrl.GetType();
 		if (t != typeof(Form)) {
-			WriteLine($"({ctrl.Name})"  + $" ({t}) "  + ctrl.Text);
+			WriteLine($"| ({ctrl.Name})"  + $" ({t}) "  + ctrl.Text);
 			values.Set(ctrl, ctrl.Text);
 		}
 
@@ -52,7 +54,7 @@ public class Aquaforms {
 
 	/// Prints a control change.
 	static void PrintChange(Control ctrl) =>
-		WriteLine($"Cambio ({ctrl.Name}) ({ctrl.GetType()}) {ctrl.Text}");
+		WriteLine($"| Cambio ({ctrl.Name}) ({ctrl.GetType()}) {ctrl.Text}");
 
 	/// Compares the current value of a given control agaist the previous
 	/// registered value for that particular control. Returns true if the 
@@ -75,19 +77,20 @@ public class Aquaforms {
 	}
 
 	/// Marks the begining of a frame.
-	static void BeginFrame() {
-		PrintSolidLine();
-		WriteLine("Frame");
+	static void BeginFrame(ValueStore values) {
+		WriteLine($"| Frame No: {values.FramesCount += 1}");
 		PrintSolidLine();
 	}
 
 	/// Marks the end of a frame.
-	static void EndFrame() =>
+	static void EndFrame() {
+		WriteLine("|");
 		PrintSolidLine();
+	}
 
 	/// Inits the capture of a new frame.
 	static void CaptureFrame(Form f, Control sender, ValueStore values) {
-		BeginFrame();
+		BeginFrame(values);
 
 		// Register sender change.
 		DieUnless(UpdateValueStore(sender, values), "Fail to update values.");

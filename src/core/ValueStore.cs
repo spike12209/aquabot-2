@@ -13,6 +13,8 @@ class ValueStore {
 	static string Str(object val) =>
 		val == null ? Empty : Intern(val.ToString());
 
+	public int FramesCount = 0;
+
 	public bool Update(Control ctrl, object val) {
 		var node = _head;
 		while (node != null) {
