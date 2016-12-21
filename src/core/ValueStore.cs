@@ -3,15 +3,15 @@ using System.Windows.Forms;
 
 using static System.String;
 
+/// This class acts as an in memory database to track controls changes.
 class ValueStore {
+	Value _head;
 
 	// Since from the winforms perspective there is no way to tell the
 	// difference between null and empty, we use and with that avoid
 	// a whole bunch of null checking.
 	static string Str(object val) =>
 		val == null ? Empty : Intern(val.ToString());
-
-	Value _head;
 
 	public bool Update(Control ctrl, object val) {
 		var node = _head;
