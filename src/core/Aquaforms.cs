@@ -6,35 +6,40 @@ using static System.Convert;
 using static Atropos;
 
 public class Aquaforms {
-	static readonly Values _values = new Values();
 
 	static void PrintSolidLine() => 
 		WriteLine("".PadRight(60, '-'));
 
+	static Values Init(Form f) {
+		Values values = new Values();
+		HookCtrls(f, values);
+		return values;
+	}
+
 	public static void Watch(Form f) {	
 		f.Shown += (s, e) => {
-			HookCtrls(f);
+			Values values = Init(f);
 			WriteLine("First Snapshot");
 			PrintSolidLine();
-			FirstSnapshot(f);
+			FirstSnapshot(f, values);
 			PrintSolidLine();
 		};
 	}
 
-	static void FirstSnapshot(Control ctrl) {
+	static void FirstSnapshot(Control ctrl, Values values) {
 
 		var t = ctrl.GetType();
 		if (t != typeof(Form)) {
 			WriteLine($"({ctrl.Name})"  + $" ({t}) "  + ctrl.Text);
-			_values.Set(ctrl, ctrl.Text);
+			values.Set(ctrl, ctrl.Text);
 		}
 
 		foreach(Control c in ctrl.Controls)
-			FirstSnapshot(c);
+			FirstSnapshot(c, values);
 	}
 
-	static bool UpdateValues(Control ctrl) => 
-		_values.Update(ctrl, ctrl.Text);
+	static bool UpdateValues(Control ctrl, Values values) => 
+		values.Update(ctrl, ctrl.Text);
 
 	static void PrintChange(Control ctrl) =>
 		WriteLine($"Cambio ({ctrl.Name}) ({ctrl.GetType()}) {ctrl.Text}");
@@ -42,20 +47,20 @@ public class Aquaforms {
 	/// Compares the current value of a given control agaist the previous
 	/// registered value for that particular control. Returns true if the 
 	/// value is different, otherwise, false.
-	static bool HasChanged(Control c) {
-		var pval = _values.Get(c);
+	static bool HasChanged(Control c, Values values) {
+		var pval = values.Get(c);
 		return String.Compare(pval, c.Text) != 0;
 	}
 
 	/// Capture the changes (if any) for a given control and its child
 	/// controls.
-	static void CaptureChangesRec(Control c) {
+	static void CaptureChangesRec(Control c, Values values) {
 		foreach(Control ctrl in c.Controls) {
-			if (HasChanged(ctrl)) {
-				DieUnless(UpdateValues(ctrl), "Fail to update values.");
+			if (HasChanged(ctrl, values)) {
+				DieUnless(UpdateValues(ctrl, values), "Fail to update values.");
 				PrintChange(ctrl);
 			}
-			CaptureChangesRec(ctrl);
+			CaptureChangesRec(ctrl, values);
 		}
 	}
 
@@ -69,33 +74,33 @@ public class Aquaforms {
 		PrintSolidLine();
 
 	/// Inits the capture of a new frame.
-	static void CaptureFrame(Form f, Control sender) {
+	static void CaptureFrame(Form f, Control sender, Values values) {
 		BeginFrame();
 
 		// Register sender change.
-		DieUnless(UpdateValues(sender), "Fail to update values.");
+		DieUnless(UpdateValues(sender, values), "Fail to update values.");
 		PrintChange(sender);
 		// Register dependencies changes.
-		CaptureChangesRec(f);
+		CaptureChangesRec(f, values);
 
 		EndFrame();
 	}
 
-	static void HookCtrls(Form f) =>
-		HookCtrls(f, f);
+	static void HookCtrls(Form f, Values values) =>
+		HookCtrls(f, f, values);
 
-	static void HookCtrls(Form f, Control ctrl) {
+	static void HookCtrls(Form f, Control ctrl, Values values) {
 		var t = ctrl.GetType();
 		if (t != typeof(Form)) {
 			ctrl.LostFocus += (s, e) => {
 				var c = (Control) s;
-				if (HasChanged(c))
-					CaptureFrame(f, c);
+				if (HasChanged(c, values))
+					CaptureFrame(f, c, values);
 			};
 		}
 
 		foreach(Control c in ctrl.Controls) {
-			HookCtrls(f, c);
+			HookCtrls(f, c, values);
 		}
 	}
 }
