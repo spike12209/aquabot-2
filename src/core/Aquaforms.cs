@@ -111,8 +111,16 @@ public class Aquaforms {
 		if (t != typeof(Form)) {
 			ctrl.LostFocus += (s, e) => {
 				var c = (Control) s;
-				if (HasChanged(c, values))
+				if (HasChanged(c, values)) {
+					//TODO: This is a usr action. Must be recorded accodringly.
+					//      (i.e. Mark the action on the script or something).
 					CaptureFrame(f, c, values);
+				}
+				else {
+					// At this branch changes are *NO* user inputs but
+					// side effects of those inputs.
+					//FIXME: Look for dependencies changes.
+				}
 			};
 		}
 
