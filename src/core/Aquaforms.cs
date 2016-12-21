@@ -5,27 +5,34 @@ using static System.Console;
 using static System.Convert;
 using static Atropos;
 
+/// This class tracks controls changes on a given form.
 public class Aquaforms {
 
-	static void PrintSolidLine() => 
-		WriteLine("".PadRight(60, '-'));
+	/// Aqua's entry point. 
+	/// This method starts looking for changes on the given form.
+	public static void Watch(Form f) {	
+		f.Shown += (s, e) => {
+			ValueStore values = Init(f);
+			PrintSolidLine(); //<= Begin spanshot.
+			WriteLine("First Snapshot");
+			FirstSnapshot(f, values);
+			PrintSolidLine(); //<= End snapshot.
+		};
+	}
 
+	/// Initializes Aquaforms. Basically, it hooks controls 
+	/// and creates the value storage database to track controls changes.
 	static ValueStore Init(Form f) {
 		ValueStore values = new ValueStore();
 		HookCtrls(f, values);
 		return values;
 	}
 
-	public static void Watch(Form f) {	
-		f.Shown += (s, e) => {
-			ValueStore values = Init(f);
-			WriteLine("First Snapshot");
-			PrintSolidLine();
-			FirstSnapshot(f, values);
-			PrintSolidLine();
-		};
-	}
+	/// Draws a solid line to the console.
+	static void PrintSolidLine() => 
+		WriteLine("".PadRight(60, '-'));
 
+	/// Takes the first snapshot, which is a picture of the whole form.
 	static void FirstSnapshot(Control ctrl, ValueStore values) {
 
 		var t = ctrl.GetType();
@@ -36,11 +43,14 @@ public class Aquaforms {
 
 		foreach(Control c in ctrl.Controls)
 			FirstSnapshot(c, values);
+
 	}
 
+	/// Update control changes to the value store.
 	static bool UpdateValueStore(Control ctrl, ValueStore values) => 
 		values.Update(ctrl, ctrl.Text);
 
+	/// Prints a control change.
 	static void PrintChange(Control ctrl) =>
 		WriteLine($"Cambio ({ctrl.Name}) ({ctrl.GetType()}) {ctrl.Text}");
 
@@ -64,12 +74,14 @@ public class Aquaforms {
 		}
 	}
 
+	/// Marks the begining of a frame.
 	static void BeginFrame() {
 		PrintSolidLine();
 		WriteLine("Frame");
 		PrintSolidLine();
 	}
 
+	/// Marks the end of a frame.
 	static void EndFrame() =>
 		PrintSolidLine();
 
@@ -86,9 +98,11 @@ public class Aquaforms {
 		EndFrame();
 	}
 
+	/// Hook handlers to track changes.
 	static void HookCtrls(Form f, ValueStore values) =>
 		HookCtrls(f, f, values);
 
+	/// Hook handlers to track changes.
 	static void HookCtrls(Form f, Control ctrl, ValueStore values) {
 		var t = ctrl.GetType();
 		if (t != typeof(Form)) {
