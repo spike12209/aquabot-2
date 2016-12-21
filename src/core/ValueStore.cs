@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 using static System.String;
 
-class Values {
+class ValueStore {
 
 	// Since from the winforms perspective there is no way to tell the
 	// difference between null and empty, we use and with that avoid
