@@ -1,0 +1,26 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Aquaforms	core/Aquaforms.cs	/^public class Aquaforms {$/;"	c
+CreateCtrls	Program.cs	/^	static void CreateCtrls(Form f) {$/;"	m	class:Program	file:
+Ctrl	core/Value.cs	/^	public readonly Control Ctrl;$/;"	f	class:Value
+FirstSnapshot	core/Aquaforms.cs	/^	static void FirstSnapshot(Control ctrl) {$/;"	m	class:Aquaforms	file:
+Get	core/Values.cs	/^	public string Get(Control ctrl) {$/;"	m	class:Values
+GetTop	Program.cs	/^	static int GetTop(Control last) {$/;"	m	class:Program	file:
+Head	core/Values.cs	/^	Value Head;$/;"	f	class:Values	file:
+HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Control ctrl) {$/;"	m	class:Aquaforms	file:
+Main	Program.cs	/^	static void Main(params string [] args) {$/;"	m	class:Program	file:
+Next	core/Value.cs	/^	public readonly Value Next;$/;"	f	class:Value
+Program	Program.cs	/^class Program {$/;"	c
+Set	core/Values.cs	/^	public void Set(Control ctrl, object val) {$/;"	m	class:Values
+Update	core/Values.cs	/^	public bool Update(Control ctrl, object val) {$/;"	m	class:Values
+Val	core/Value.cs	/^	public string Val;$/;"	f	class:Value
+Value	core/Value.cs	/^	public Value(Value next, Control ctrl, string val) {$/;"	m	class:Value
+Value	core/Value.cs	/^class Value {$/;"	c
+Values	core/Values.cs	/^class Values {$/;"	c
+Watch	core/Aquaforms.cs	/^	public static void Watch(Form f) {	$/;"	m	class:Aquaforms
+_values	core/Aquaforms.cs	/^	static readonly Values _values = new Values();$/;"	f	class:Aquaforms	file:
+ctrl	core/Aquaforms.cs	/^	static bool UpdateValues(Control ctrl) => $/;"	f	class:Aquaforms	file:

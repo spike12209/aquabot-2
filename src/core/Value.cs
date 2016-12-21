@@ -4,9 +4,9 @@ using System.Windows.Forms;
 class Value {
 	public readonly Control Ctrl;
 	public readonly Value Next;
-	public object Val;
+	public string Val;
 
-	public Value(Value next, Control ctrl, object val) {
+	public Value(Value next, Control ctrl, string val) {
 		Next = next;
 		Ctrl = ctrl;
 		Val  = val;

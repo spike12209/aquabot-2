@@ -1,13 +1,23 @@
 using System;
 using System.Windows.Forms;
 
+using static System.String;
+
 class Values {
-	Value Head;
+
+	// Since from the winforms perspective there is no way to tell the
+	// difference between null and empty, we use and with that avoid
+	// a whole bunch of null checking.
+	static string Str(object val) =>
+		val == null ? Empty : Intern(val.ToString());
+
+	Value _head;
+
 	public bool Update(Control ctrl, object val) {
-		var node = Head;
-		while(node != null) {
+		var node = _head;
+		while (node != null) {
 			if (node.Ctrl == ctrl) {
-				node.Val = val;
+				node.Val = Str(val);
 				return true;
 			}
 			node = node.Next; 
@@ -16,12 +26,12 @@ class Values {
 	}
 
 	public void Set(Control ctrl, object val) {
-		Head = new Value(Head, ctrl, val);
+		_head = new Value(_head, ctrl, Str(val));
 	}
 
-	public object Get(Control ctrl) {
-		var node = Head;
-		while(node != null) {
+	public string Get(Control ctrl) {
+		var node = _head;
+		while (node != null) {
 			if (node.Ctrl == ctrl)
 				return node.Val;
 			node = node.Next; 

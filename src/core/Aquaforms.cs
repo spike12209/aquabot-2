@@ -32,17 +32,19 @@ public class Aquaforms {
 	}
 
 
+	static bool UpdateValues(Control ctrl) => 
+		_values.Update(ctrl, ctrl.Text);
+
 	static void HookCtrls(Control ctrl) {
 		var t = ctrl.GetType();
 		if (t != typeof(Form)) {
 
 			ctrl.LostFocus += (s, e) => {
 				var c = (Control)s;
-				var pval = _values.Get(c).ToString();
-				if (String.Compare(pval?.ToString(), c.Text) != 0) {
+				var pval = _values.Get(c);
+				if (String.Compare(pval, c.Text) != 0) {
 					WriteLine($"Cambio ({c.Name}) ({t}) {c.Text}");
-					DieUnless(_values.Update(ctrl, ctrl.Text), 
-							"Fail to update values.");
+					DieUnless(UpdateValues(c), "Fail to update values.");
 				}
 			};
 		}
