@@ -51,7 +51,6 @@ class Program {
 			txtPrice.Text = "123";	
 			txtQty.Text = "2";	
 			updateTot(txtPrice, txtQty);
-			WriteLine("Su shown");
 		};
 	}
 

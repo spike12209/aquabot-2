@@ -5,13 +5,13 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
 Aquaforms	core/Aquaforms.cs	/^public class Aquaforms {$/;"	c
+CaptureFrame	core/Aquaforms.cs	/^	static void CaptureFrame(Control sender) {$/;"	m	class:Aquaforms	file:
 CreateCtrls	Program.cs	/^	static void CreateCtrls(Form f) {$/;"	m	class:Program	file:
 Ctrl	core/Value.cs	/^	public readonly Control Ctrl;$/;"	f	class:Value
 FirstSnapshot	core/Aquaforms.cs	/^	static void FirstSnapshot(Control ctrl) {$/;"	m	class:Aquaforms	file:
 Get	core/Values.cs	/^	public string Get(Control ctrl) {$/;"	m	class:Values
 GetTop	Program.cs	/^	static int GetTop(Control last) {$/;"	m	class:Program	file:
-Head	core/Values.cs	/^	Value Head;$/;"	f	class:Values	file:
-HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Control ctrl) {$/;"	m	class:Aquaforms	file:
+HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, Control ctrl) {$/;"	m	class:Aquaforms	file:
 Main	Program.cs	/^	static void Main(params string [] args) {$/;"	m	class:Program	file:
 Next	core/Value.cs	/^	public readonly Value Next;$/;"	f	class:Value
 Program	Program.cs	/^class Program {$/;"	c
@@ -22,5 +22,9 @@ Value	core/Value.cs	/^	public Value(Value next, Control ctrl, string val) {$/;"	
 Value	core/Value.cs	/^class Value {$/;"	c
 Values	core/Values.cs	/^class Values {$/;"	c
 Watch	core/Aquaforms.cs	/^	public static void Watch(Form f) {	$/;"	m	class:Aquaforms
+_head	core/Values.cs	/^	Value _head;$/;"	f	class:Values	file:
 _values	core/Aquaforms.cs	/^	static readonly Values _values = new Values();$/;"	f	class:Aquaforms	file:
 ctrl	core/Aquaforms.cs	/^	static bool UpdateValues(Control ctrl) => $/;"	f	class:Aquaforms	file:
+ctrl	core/Aquaforms.cs	/^	static void PrintCtrl(Control ctrl) =>$/;"	f	class:Aquaforms	file:
+f	core/Aquaforms.cs	/^	static void HookCtrls(Form f) =>$/;"	f	class:Aquaforms	file:
+val	core/Values.cs	/^	static string Str(object val) =>$/;"	f	class:Values	file:
