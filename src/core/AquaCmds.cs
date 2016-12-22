@@ -58,15 +58,31 @@ class AquaCmds : Form {
 	public AquaCmds(Form host) {
 		// Attach
 		Owner = host;
-
 		// Commands
-		Button btnRec, btnRep, btnStop, btnNotes, btnOpen, btnSave;
-		btnRec   = CreateBtn("Record", ()=> WriteLine("Recording ...."), null);
-		btnRep   = CreateBtn("Replay", ()=> WriteLine("Replaying ...."), btnRec);
-		btnStop  = CreateBtn("Stop",   ()=> WriteLine("Stop ...."), btnRep);
-		btnNotes = CreateBtn("Notes",  ()=> WriteLine("Adding notes ...."), btnStop);
-		btnOpen  = CreateBtn("Open",   ()=> WriteLine("Opening..."), btnNotes);
-		btnSave  = CreateBtn("Save",   ()=> WriteLine("Saving..."), btnOpen);
+		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnOpen, btnSave;
+		Action record, replay, stop;
+
+		record = ()=> { 
+			Write("TODO: Start recording...\n");
+			btnRep.Enabled = false;
+		};
+
+		replay = ()=> { 
+			Write("TODO: Start replaying...\n");
+			btnRec.Enabled = false;
+		};
+
+		stop = () => {
+			btnRec.Enabled = true;
+			btnRep.Enabled = true;
+		};
+
+		btnRec   = CreateBtn("Record", record, null);
+		btnRep   = CreateBtn("Replay", replay, btnRec);
+		btnStop  = CreateBtn("Stop",   stop, btnRep);
+		btnNotes = CreateBtn("Notes",  ()=> Write("Adding notes...\n"), btnStop);
+		btnOpen  = CreateBtn("Open",   ()=> Write("Opening...\n"), btnNotes);
+		btnSave  = CreateBtn("Save",   ()=> Write("Saving...\n"), btnOpen);
 
 		Controls.Add(btnRec);
 		Controls.Add(btnRep);
