@@ -5,6 +5,7 @@ build: ./src/**/*.cs
 	cp ./lib/atropos.dll ./bin/atropos.dll
 	
 	mcs ./src/core/*.cs /target:library /out:./bin/aquaforms.dll \
+		/r:System.Drawing \
 		/r:./lib/atropos.dll \
 		/r:System.Windows.Forms
 	
