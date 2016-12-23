@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using static System.Console;
 using static System.Convert;
 using static Atropos;
+using static ConditionalHelpers;
 
 /// This class tracks controls changes on a given form.
 public class Aquaforms {
@@ -81,8 +82,13 @@ public class Aquaforms {
 	}
 
 	/// Marks the begining of a frame.
-	static void BeginFrame(ValueStore values) {
-		WriteLine($"| Frame No: {values.FramesCount += 1}");
+	static void BeginFrame(ValueStore values, Control input) {
+		var frameMsg = $"| Frame No: {values.FramesCount += 1}";
+		Unless(input == null, ()=> { 
+			frameMsg += $" -- input: {input.Name}";
+		});
+
+		WriteLine(frameMsg);
 		PrintSolidLine();
 	}
 
@@ -94,16 +100,24 @@ public class Aquaforms {
 
 	/// Inits the capture of a new frame.
 	static void CaptureFrame(Form f, Control sender, ValueStore values) {
-		BeginFrame(values);
+		BeginFrame(values, sender);
 
-		// Register sender change.
-		DieUnless(UpdateValueStore(sender, values), "Fail to update values.");
-		PrintChange(sender);
+		Unless(sender == null, () => {
+			DieUnless(UpdateValueStore(sender, values), "Fail to update values.");
+			PrintChange(sender);
+		});
+
 		// Register dependencies changes.
 		CaptureChangesRec(f, values);
 
 		EndFrame();
 	}
+
+	/// This happens when a value gets updated because a control 
+	/// looses its focus but that control didn't change.
+	static void CaptureFrameOther(Form f, ValueStore values) =>
+		CaptureFrame(f, null, values);
+
 
 	/// Hook handlers to track changes.
 	static void HookCtrls(Form f, ValueStore values) =>
@@ -112,8 +126,11 @@ public class Aquaforms {
 	static void HasChangeOther(Form f, ValueStore values) {
 		foreach(Control c in f.Controls)
 			if (HasChanged(c, values))
-				CaptureFrame(f, c, values);		
+				CaptureFrameOther(f, values);		
 	}
+
+	static void CaptureInput(Form f, Control c, ValueStore values) =>
+		CaptureFrame(f, c, values);
 
 	/// Hook handlers to track changes.
 	static void HookCtrls(Form f, Control ctrl, ValueStore values) {
@@ -122,15 +139,7 @@ public class Aquaforms {
 			ctrl.LostFocus += (s, e) => {
 				var c = (Control) s;
 				if (HasChanged(c, values)) {
-					//TODO: This is a usr action. Must be recorded accodringly.
-					//      (i.e. Mark the action on the script or something).
-					//      One user input can have zero or more side effects.
-					//      Size effects are always caused (directly or 
-					//      indirectly) by a usr input.
-					//
-					//      chage txtFoo -> 
-					//			side effects on txtBar
-					CaptureFrame(f, c, values);
+					CaptureInput(f, c, values);
 				}
 				else {
 					HasChangeOther(f, values);

@@ -4,27 +4,43 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+AquaCmds	core/AquaCmds.cs	/^	public AquaCmds(Form host) {$/;"	m	class:AquaCmds
+AquaCmds	core/AquaCmds.cs	/^class AquaCmds : Form {$/;"	c
 Aquaforms	core/Aquaforms.cs	/^public class Aquaforms {$/;"	c
-CaptureFrame	core/Aquaforms.cs	/^	static void CaptureFrame(Control sender) {$/;"	m	class:Aquaforms	file:
+AttachTo	core/AquaCmds.cs	/^	public static void AttachTo(Form host) {$/;"	m	class:AquaCmds
+BeginFrame	core/Aquaforms.cs	/^	static void BeginFrame(ValueStore values, Control input) {$/;"	m	class:Aquaforms	file:
+CTRLH	core/AquaCmds.cs	/^		CTRLH   = 30,$/;"	f	class:AquaCmds	file:
+CTRLOFF	core/AquaCmds.cs	/^		CTRLOFF = 10, \/\/<= Space between controls.$/;"	f	class:AquaCmds	file:
+CTRLTOP	core/AquaCmds.cs	/^		CTRLTOP = 10;$/;"	f	class:AquaCmds	file:
+CaptureChangesRec	core/Aquaforms.cs	/^	static void CaptureChangesRec(Control c, ValueStore values) {$/;"	m	class:Aquaforms	file:
+CaptureFrame	core/Aquaforms.cs	/^	static void CaptureFrame($/;"	m	class:Aquaforms	file:
+CreateBtn	core/AquaCmds.cs	/^	static Button CreateBtn(string text, Action onClick, Control previous) {$/;"	m	class:AquaCmds	file:
 CreateCtrls	Program.cs	/^	static void CreateCtrls(Form f) {$/;"	m	class:Program	file:
 Ctrl	core/Value.cs	/^	public readonly Control Ctrl;$/;"	f	class:Value
-FirstSnapshot	core/Aquaforms.cs	/^	static void FirstSnapshot(Control ctrl) {$/;"	m	class:Aquaforms	file:
-Get	core/Values.cs	/^	public string Get(Control ctrl) {$/;"	m	class:Values
+EndFrame	core/Aquaforms.cs	/^	static void EndFrame() {$/;"	m	class:Aquaforms	file:
+FirstSnapshot	core/Aquaforms.cs	/^	static void FirstSnapshot(Control ctrl, ValueStore values) {$/;"	m	class:Aquaforms	file:
+FramesCount	core/ValueStore.cs	/^	public int FramesCount = 0;$/;"	f	class:ValueStore
+Get	core/ValueStore.cs	/^	public string Get(Control ctrl) {$/;"	m	class:ValueStore
 GetTop	Program.cs	/^	static int GetTop(Control last) {$/;"	m	class:Program	file:
-HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, Control ctrl) {$/;"	m	class:Aquaforms	file:
+HasChangeOther	core/Aquaforms.cs	/^	static void HasChangeOther(Form f, ValueStore values) {$/;"	m	class:Aquaforms	file:
+HasChanged	core/Aquaforms.cs	/^	static bool HasChanged(Control c, ValueStore values) {$/;"	m	class:Aquaforms	file:
+HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, Control ctrl, ValueStore values) {$/;"	m	class:Aquaforms	file:
+HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, ValueStore values) =>$/;"	m	class:Aquaforms	file:
+Init	core/Aquaforms.cs	/^	static ValueStore Init(Form f) {$/;"	m	class:Aquaforms	file:
 Main	Program.cs	/^	static void Main(params string [] args) {$/;"	m	class:Program	file:
 Next	core/Value.cs	/^	public readonly Value Next;$/;"	f	class:Value
+PrintSolidLine	core/Aquaforms.cs	/^	static void PrintSolidLine() => $/;"	m	class:Aquaforms	file:
 Program	Program.cs	/^class Program {$/;"	c
-Set	core/Values.cs	/^	public void Set(Control ctrl, object val) {$/;"	m	class:Values
-Update	core/Values.cs	/^	public bool Update(Control ctrl, object val) {$/;"	m	class:Values
+Set	core/ValueStore.cs	/^	public void Set(Control ctrl, object val) {$/;"	m	class:ValueStore
+SetPositionOnScreen	core/AquaCmds.cs	/^	void SetPositionOnScreen(Form host) {$/;"	m	class:AquaCmds	file:
+SumCtrlsWidth	core/AquaCmds.cs	/^	static int SumCtrlsWidth(Form f, int offset) {$/;"	m	class:AquaCmds	file:
+Update	core/ValueStore.cs	/^	public bool Update(Control ctrl, object val) {$/;"	m	class:ValueStore
+UpdateValueStore	core/Aquaforms.cs	/^	static bool UpdateValueStore(Control ctrl, ValueStore values) => $/;"	m	class:Aquaforms	file:
 Val	core/Value.cs	/^	public string Val;$/;"	f	class:Value
 Value	core/Value.cs	/^	public Value(Value next, Control ctrl, string val) {$/;"	m	class:Value
 Value	core/Value.cs	/^class Value {$/;"	c
-Values	core/Values.cs	/^class Values {$/;"	c
+ValueStore	core/ValueStore.cs	/^class ValueStore {$/;"	c
 Watch	core/Aquaforms.cs	/^	public static void Watch(Form f) {	$/;"	m	class:Aquaforms
-_head	core/Values.cs	/^	Value _head;$/;"	f	class:Values	file:
-_values	core/Aquaforms.cs	/^	static readonly Values _values = new Values();$/;"	f	class:Aquaforms	file:
-ctrl	core/Aquaforms.cs	/^	static bool UpdateValues(Control ctrl) => $/;"	f	class:Aquaforms	file:
-ctrl	core/Aquaforms.cs	/^	static void PrintCtrl(Control ctrl) =>$/;"	f	class:Aquaforms	file:
-f	core/Aquaforms.cs	/^	static void HookCtrls(Form f) =>$/;"	f	class:Aquaforms	file:
-val	core/Values.cs	/^	static string Str(object val) =>$/;"	f	class:Values	file:
+_head	core/ValueStore.cs	/^	Value _head;$/;"	f	class:ValueStore	file:
+ctrl	core/Aquaforms.cs	/^	static void PrintChange(Control ctrl) =>$/;"	f	class:Aquaforms	file:
+val	core/ValueStore.cs	/^	static string Str(object val) =>$/;"	f	class:ValueStore	file:
