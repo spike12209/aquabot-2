@@ -1,6 +1,9 @@
 #pragma warning disable 414
 
 using System;
+using static Atropos;
+using static System.Console;
+
 using _ = System.Action<Contest.Core.Runner>;
 
 class Aquatests {
@@ -89,8 +92,11 @@ class Aquatests {
 		public SideNode Side;
 		// ------------------------------------------------------
 
+		public int MovesCount;
+
 		/// Records a move.
 		public void Move(MoveNode mv) {
+			MovesCount++;
 			LastMove = mv;
 
 			if (Next == null) { // First move.
@@ -98,9 +104,11 @@ class Aquatests {
 				return;
 			}
 
-			MoveNode tail;
-			while ((tail = Next) != null)
-				;
+			MoveNode tail = Next;
+			while (tail.Next != null)
+				tail = tail.Next;
+
+			DieIf(tail == null, "Tail can't be null.");
 			tail.Next = mv;
 		}
 
@@ -115,36 +123,46 @@ class Aquatests {
 		}
 	}
 
-
-	_ record_moves_changes_and_side_effects =  assert => {
-		// -----------------
-		// Initial values
-		// -----------------
-		// tot = 0.00
-		// pri = 0.00
-		// qty = 0.00
-		// rte = 0.21
-		// -----------------
-		// Formulas
-		// -----------------
-		// tot = prc * qty;
-		// tax = tot * rte;
-		// -----------------
+	_ add_move = assert => {
 		var lane = new MoveNode();
 		var m1   = new MoveNode();
-		lane.Move(m1);
-		// (tot = 14*0) == 0 => No SE.
-		lane.LastMove.RegisterChange(new ChangeNode("prc", 14));
-
 		var m2   = new MoveNode();
-		// (tot = 14 * 5) == 70 => SE on tot => (0 => 70).
-		lane.LastMove.RegisterChange(new ChangeNode("qty", 5));
-        // (tax = 70 * .21) == 14.7 => SE on tax (0 => 14.7).
-		lane.LastMove.Change.RegisterSide(new SideNode("tot", 70));
-		lane.LastMove.Change.RegisterSide(new SideNode("tax", 14.7));
-		// No deps on tax. No SE.
-		lane.Move(m2);
 
-		// TODO: Walk graph and run assertions.
+		lane.Move(m1);
+		lane.Move(m2);
+		assert.Equal(2,  lane.MovesCount);
+		assert.Equal(m2, lane.LastMove);
 	};
+
+	// _ record_moves_changes_and_side_effects =  assert => {
+	// 	// -----------------
+	// 	// Initial values
+	// 	// -----------------
+	// 	// tot = 0.00
+	// 	// pri = 0.00
+	// 	// qty = 0.00
+	// 	// rte = 0.21
+	// 	// -----------------
+	// 	// Formulas
+	// 	// -----------------
+	// 	// tot = prc * qty;
+	// 	// tax = tot * rte;
+	// 	// -----------------
+	// 	var lane = new MoveNode();
+	// 	var m1   = new MoveNode();
+	// 	lane.Move(m1);
+	// 	// (tot = 14*0) == 0 => No SE.
+	// 	lane.LastMove.RegisterChange(new ChangeNode("prc", 14));
+    //
+	// 	var m2   = new MoveNode();
+	// 	// (tot = 14 * 5) == 70 => SE on tot => (0 => 70).
+	// 	lane.LastMove.RegisterChange(new ChangeNode("qty", 5));
+    //     // (tax = 70 * .21) == 14.7 => SE on tax (0 => 14.7).
+	// 	lane.LastMove.Change.RegisterSide(new SideNode("tot", 70));
+	// 	lane.LastMove.Change.RegisterSide(new SideNode("tax", 14.7));
+	// 	// No deps on tax. No SE.
+	// 	lane.Move(m2);
+    //
+	// 	// TODO: Walk graph and run assertions.
+	// };
 }
