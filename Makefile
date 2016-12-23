@@ -7,6 +7,7 @@ build: ./src/**/*.cs
 	mcs ./src/core/*.cs /target:library /out:./bin/aquaforms.dll \
 		/r:System.Drawing \
 		/r:./lib/atropos.dll \
+		/r:./lib/Contest.Core.dll \
 		/r:System.Windows.Forms
 	
 	mcs ./src/*.cs /target:exe /out:./bin/aqua.exe \
