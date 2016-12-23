@@ -109,6 +109,12 @@ public class Aquaforms {
 	static void HookCtrls(Form f, ValueStore values) =>
 		HookCtrls(f, f, values);
 
+	static void HasChangeOther(Form f, ValueStore values) {
+		foreach(Control c in f.Controls)
+			if (HasChanged(c, values))
+				CaptureFrame(f, c, values);		
+	}
+
 	/// Hook handlers to track changes.
 	static void HookCtrls(Form f, Control ctrl, ValueStore values) {
 		var t = ctrl.GetType();
@@ -118,7 +124,6 @@ public class Aquaforms {
 				if (HasChanged(c, values)) {
 					//TODO: This is a usr action. Must be recorded accodringly.
 					//      (i.e. Mark the action on the script or something).
-					//      jhh
 					//      One user input can have zero or more side effects.
 					//      Size effects are always caused (directly or 
 					//      indirectly) by a usr input.
@@ -128,9 +133,7 @@ public class Aquaforms {
 					CaptureFrame(f, c, values);
 				}
 				else {
-					// At this branch changes are *NO* user inputs but
-					// side effects of those inputs.
-					//FIXME: Look for dependencies changes.
+					HasChangeOther(f, values);
 				}
 			};
 		}
