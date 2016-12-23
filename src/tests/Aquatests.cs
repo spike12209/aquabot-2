@@ -11,6 +11,13 @@ class Aquatests {
 	}
 
 	/// This nodes are used to represent a move in the "moves lane".
+	/// move 1
+	///	   \
+	///	  move 2
+	///	     \
+	///	    move 3
+	///	       \
+	///	        *
 	class MoveNode : Node {
 
 		/// Points to the next move.
@@ -32,12 +39,28 @@ class Aquatests {
 	}
 
 	/// This nodes are used to represent changes.
+	/// move 1
+	///	   \
+	///	  move 2 ----- change 2.1
+	///	     \
+	///	    move 3 --- change 3.1
+	///	       \
+	///	        *
 	class ChangeNode : Node {
 		public ChandeNode Next;
 		public SideNode   Side;
 	}
 
 	/// This nodes are used to represent side effects.
+	/// move 1
+	///	   \
+	///	  move 2 ---- change 2.1 ----- side 2.1.1
+	///	     \			                 \
+	///	      \		                     side 2.1.2
+	///	       \
+	///	      move 3 ----------------- side 3.0.1
+	///	         \
+	///	          *
 	class SideNode : Node {
 		public SideNode Next;
 	}
