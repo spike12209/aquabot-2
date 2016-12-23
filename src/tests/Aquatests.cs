@@ -32,7 +32,7 @@ class Aquatests {
 		// | change.                                            |
 		// +----------------------------------------------------+
 		/// Points to a change produced by the move.
-		public ChandeNode Change;
+		public ChangeNode Change;
 		/// Points to a side effect produced by the move.
 		public SideNode Side;
 		// ------------------------------------------------------
@@ -47,7 +47,7 @@ class Aquatests {
 	///	       \
 	///	        *
 	class ChangeNode : Node {
-		public ChandeNode Next;
+		public ChangeNode Next;
 		public SideNode   Side;
 	}
 
