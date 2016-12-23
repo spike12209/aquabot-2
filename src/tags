@@ -7,13 +7,19 @@
 AquaCmds	core/AquaCmds.cs	/^	public AquaCmds(Form host) {$/;"	m	class:AquaCmds
 AquaCmds	core/AquaCmds.cs	/^class AquaCmds : Form {$/;"	c
 Aquaforms	core/Aquaforms.cs	/^public class Aquaforms {$/;"	c
+Aquatests	tests/Aquatests.cs	/^class Aquatests {$/;"	c
 AttachTo	core/AquaCmds.cs	/^	public static void AttachTo(Form host) {$/;"	m	class:AquaCmds
 BeginFrame	core/Aquaforms.cs	/^	static void BeginFrame(ValueStore values, Control input) {$/;"	m	class:Aquaforms	file:
 CTRLH	core/AquaCmds.cs	/^		CTRLH   = 30,$/;"	f	class:AquaCmds	file:
 CTRLOFF	core/AquaCmds.cs	/^		CTRLOFF = 10, \/\/<= Space between controls.$/;"	f	class:AquaCmds	file:
 CTRLTOP	core/AquaCmds.cs	/^		CTRLTOP = 10;$/;"	f	class:AquaCmds	file:
 CaptureChangesRec	core/Aquaforms.cs	/^	static void CaptureChangesRec(Control c, ValueStore values) {$/;"	m	class:Aquaforms	file:
-CaptureFrame	core/Aquaforms.cs	/^	static void CaptureFrame($/;"	m	class:Aquaforms	file:
+CaptureFrame	core/Aquaforms.cs	/^	static void CaptureFrame(Form f, Control sender, ValueStore values) {$/;"	m	class:Aquaforms	file:
+CaptureFrameOther	core/Aquaforms.cs	/^	static void CaptureFrameOther(Form f, ValueStore values) =>$/;"	m	class:Aquaforms	file:
+CaptureInput	core/Aquaforms.cs	/^	static void CaptureInput(Form f, Control c, ValueStore values) =>$/;"	m	class:Aquaforms	file:
+Change	tests/Aquatests.cs	/^		public ChangeNode Change;$/;"	f	class:Aquatests.MoveNode
+ChangeNode	tests/Aquatests.cs	/^	class ChangeNode : Node {$/;"	c	class:Aquatests
+ConditionalHelpers	core/ConditionalHelpers.cs	/^class ConditionalHelpers {$/;"	c
 CreateBtn	core/AquaCmds.cs	/^	static Button CreateBtn(string text, Action onClick, Control previous) {$/;"	m	class:AquaCmds	file:
 CreateCtrls	Program.cs	/^	static void CreateCtrls(Form f) {$/;"	m	class:Program	file:
 Ctrl	core/Value.cs	/^	public readonly Control Ctrl;$/;"	f	class:Value
@@ -27,20 +33,33 @@ HasChanged	core/Aquaforms.cs	/^	static bool HasChanged(Control c, ValueStore val
 HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, Control ctrl, ValueStore values) {$/;"	m	class:Aquaforms	file:
 HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, ValueStore values) =>$/;"	m	class:Aquaforms	file:
 Init	core/Aquaforms.cs	/^	static ValueStore Init(Form f) {$/;"	m	class:Aquaforms	file:
+Label	tests/Aquatests.cs	/^		public string Label, Notes;$/;"	f	class:Aquatests.Node
 Main	Program.cs	/^	static void Main(params string [] args) {$/;"	m	class:Program	file:
+MoveNode	tests/Aquatests.cs	/^	class MoveNode : Node {$/;"	c	class:Aquatests
 Next	core/Value.cs	/^	public readonly Value Next;$/;"	f	class:Value
+Next	tests/Aquatests.cs	/^		public ChangeNode Next;$/;"	f	class:Aquatests.ChangeNode
+Next	tests/Aquatests.cs	/^		public MoveNode Next;$/;"	f	class:Aquatests.MoveNode
+Next	tests/Aquatests.cs	/^		public SideNode Next;$/;"	f	class:Aquatests.SideNode
+Node	tests/Aquatests.cs	/^	class Node {$/;"	c	class:Aquatests
+Notes	tests/Aquatests.cs	/^		public string Label, Notes;$/;"	f	class:Aquatests.Node
 PrintSolidLine	core/Aquaforms.cs	/^	static void PrintSolidLine() => $/;"	m	class:Aquaforms	file:
 Program	Program.cs	/^class Program {$/;"	c
 Set	core/ValueStore.cs	/^	public void Set(Control ctrl, object val) {$/;"	m	class:ValueStore
 SetPositionOnScreen	core/AquaCmds.cs	/^	void SetPositionOnScreen(Form host) {$/;"	m	class:AquaCmds	file:
+Side	tests/Aquatests.cs	/^		public SideNode   Side;$/;"	f	class:Aquatests.ChangeNode
+Side	tests/Aquatests.cs	/^		public SideNode Side;$/;"	f	class:Aquatests.MoveNode
+SideNode	tests/Aquatests.cs	/^	class SideNode : Node {$/;"	c	class:Aquatests
 SumCtrlsWidth	core/AquaCmds.cs	/^	static int SumCtrlsWidth(Form f, int offset) {$/;"	m	class:AquaCmds	file:
+Unless	core/ConditionalHelpers.cs	/^	public static void Unless (bool cond, Action trueBr, Action falseBr = null) {$/;"	m	class:ConditionalHelpers
 Update	core/ValueStore.cs	/^	public bool Update(Control ctrl, object val) {$/;"	m	class:ValueStore
 UpdateValueStore	core/Aquaforms.cs	/^	static bool UpdateValueStore(Control ctrl, ValueStore values) => $/;"	m	class:Aquaforms	file:
 Val	core/Value.cs	/^	public string Val;$/;"	f	class:Value
 Value	core/Value.cs	/^	public Value(Value next, Control ctrl, string val) {$/;"	m	class:Value
 Value	core/Value.cs	/^class Value {$/;"	c
+Value	tests/Aquatests.cs	/^		public object Value;$/;"	f	class:Aquatests.Node
 ValueStore	core/ValueStore.cs	/^class ValueStore {$/;"	c
 Watch	core/Aquaforms.cs	/^	public static void Watch(Form f) {	$/;"	m	class:Aquaforms
 _head	core/ValueStore.cs	/^	Value _head;$/;"	f	class:ValueStore	file:
 ctrl	core/Aquaforms.cs	/^	static void PrintChange(Control ctrl) =>$/;"	f	class:Aquaforms	file:
+record_moves_changes_and_side_effects	tests/Aquatests.cs	/^	_ record_moves_changes_and_side_effects =  assert => {$/;"	f	class:Aquatests	file:
 val	core/ValueStore.cs	/^	static string Str(object val) =>$/;"	f	class:ValueStore	file:
