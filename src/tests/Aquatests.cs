@@ -31,11 +31,11 @@ class Aquatests {
 	///	      move 3 ----------------- side 3.0.1
 	///	         \
 	///	          *
-	class SideNode : Node {
-		public SideNode(string lbl = null, object val = null) 
-			: base(lbl, val) {}
+	class SideEffectNode : Node {
+		public SideEffectNode(string inputName = null, object val = null) 
+			: base(inputName, val) {}
 
-		public SideNode Next;
+		public SideEffectNode Next;
 	}
 
 	/// This nodes are used to represent changes.
@@ -50,11 +50,24 @@ class Aquatests {
 		public ChangeNode(string lbl = null, object val = null) 
 			: base(lbl, val) {}
 
-		public SideNode   Side;
+		public int SideCount;
+		public SideEffectNode SideEffects;
 
 		/// Records a Side Effect **RELATIVE TO THE CHANGE**.
-		public void RecordSide(SideNode side) {
-			//TODO: Record Side **To Change**.
+		public void RecordSide(SideEffectNode side) {
+			SideCount ++;
+
+			if (SideEffects == null) { // First side;
+				SideEffects = new SideEffectNode();
+				return;
+			}
+
+			SideEffectNode tail = SideEffects.Next;
+			while (tail != null) {
+				tail = tail.Next;
+			}
+			tail.Next = side;
+
 		}
 	}
 
@@ -77,7 +90,7 @@ class Aquatests {
 			/// Points to the last move.
 			LastMove;
 
-	// +----------------------------------------------------+
+		// +----------------------------------------------------+
 		// | IMPORTANT: Change and Side are mutualy exclusive.  |
 		// | If a change has side effects, those side effects   |
 		// | start at the change node, *NOT* at the move.       |
@@ -88,11 +101,14 @@ class Aquatests {
 		/// Points to a change produced by the move.
 		public ChangeNode Change; 
 
-		/// Points to a side effect produced by the move.
-		public SideNode Side;
+		public SideEffectNode 
+			/// Points to the first side effect produced by the move.
+			Side, 
+			/// Points to the last side effect.
+			LastSide;
 		// ------------------------------------------------------
 
-		public int MovesCount;
+		public int MovesCount, SideCount;
 
 		/// Records a move.
 		public void RecordMove(MoveNode mv) {
@@ -117,8 +133,20 @@ class Aquatests {
 		}
 
 		/// Records a Side Effect **RELATIVE TO THE MOVE**.
-		public void RecordSide(ChangeNode change) {
-			//TODO: Record Side **To Move**.
+		public void RecordSide(SideEffectNode se) {
+			SideCount ++;
+			LastSide = se;
+
+			if (Side == null) { // First side effect;
+				Side = se;
+				return;
+			}
+
+			SideEffectNode tail = Side.Next;
+			while (tail != null) {
+				tail = tail.Next;
+			}
+			tail.Next = se;
 		}
 	}
 
@@ -132,7 +160,7 @@ class Aquatests {
 
 	_ after_each  = assert => {  /*TODO: Cleanup (if needed). */};
 	
-	_ add_move = assert => {
+	_ record_move = assert => {
 		var m1 = new MoveNode();
 		var m2 = new MoveNode();
 
@@ -142,7 +170,7 @@ class Aquatests {
 		assert.Equal(m2, Lane.LastMove);
 	};
 
-	_ add_change = assert => {
+	_ record_change = assert => {
 		var m1   = new MoveNode();
 		MakeChange(ref m1, "prc", 123);
 		Lane.RecordMove(m1);
@@ -151,39 +179,17 @@ class Aquatests {
 		assert.Equal(123,   Lane.LastMove.Change.Value);
 	};
 
-	_ add_side_effect = assert => {
-			
+	_ record_side_effect_RELATIVE_TO_MOVE = assert => {
+		var mv1   = new MoveNode();
+		mv1.RecordSide(new SideEffectNode("tot", 321));
+		Lane.RecordMove(mv1);
+		var lmv = Lane.LastMove;
+		assert.Equal(1, lmv.SideCount);
+		assert.Equal("tot", lmv.LastSide.InputName);
+		assert.Equal(321,   lmv.LastSide.Value);
 	};
 
-	// _ record_moves_changes_and_side_effects =  assert => {
-	// 	// -----------------
-	// 	// Initial values
-	// 	// -----------------
-	// 	// tot = 0.00
-	// 	// pri = 0.00
-	// 	// qty = 0.00
-	// 	// rte = 0.21
-	// 	// -----------------
-	// 	// Formulas
-	// 	// -----------------
-	// 	// tot = prc * qty;
-	// 	// tax = tot * rte;
-	// 	// -----------------
-	// 	var Lane = new MoveNode();
-	// 	var m1   = new MoveNode();
-	// 	Lane.Move(m1);
-	// 	// (tot = 14*0) == 0 => No SE.
-	// 	Lane.LastMove.RecordChange(new ChangeNode("prc", 14));
-    //
-	// 	var m2   = new MoveNode();
-	// 	// (tot = 14 * 5) == 70 => SE on tot => (0 => 70).
-	// 	Lane.LastMove.RecordChange(new ChangeNode("qty", 5));
-    //     // (tax = 70 * .21) == 14.7 => SE on tax (0 => 14.7).
-	// 	Lane.LastMove.Change.RecordSide(new SideNode("tot", 70));
-	// 	Lane.LastMove.Change.RecordSide(new SideNode("tax", 14.7));
-	// 	// No deps on tax. No SE.
-	// 	Lane.Move(m2);
-    //
-	// 	// TODO: Walk graph and run assertions.
-	// };
+	_ record_side_effect_RELATIVE_TO_CHANGE = assert => {
+		//TODO:
+	};
 }
