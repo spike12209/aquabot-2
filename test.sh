@@ -1,1 +1,1 @@
-mono ./lib/contest.exe run -nh ./bin/aquatests.dll
+mono --debug ./lib/contest.exe run -nh ./bin/aquatests.dll
