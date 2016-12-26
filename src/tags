@@ -17,7 +17,7 @@ CaptureChangesRec	core/Aquaforms.cs	/^	static void CaptureChangesRec(Control c, 
 CaptureFrame	core/Aquaforms.cs	/^	static void CaptureFrame(Form f, Control sender, ValueStore values) {$/;"	m	class:Aquaforms	file:
 CaptureFrameOther	core/Aquaforms.cs	/^	static void CaptureFrameOther(Form f, ValueStore values) =>$/;"	m	class:Aquaforms	file:
 CaptureInput	core/Aquaforms.cs	/^	static void CaptureInput(Form f, Control c, ValueStore values) =>$/;"	m	class:Aquaforms	file:
-Change	tests/Aquatests.cs	/^		public ChangeNode Change; $/;"	f	class:Aquatests.MoveNode
+Change	tests/Aquatests.cs	/^		public ChangeNode Change; \/\/ One move == One Change$/;"	f	class:Aquatests.MoveNode
 ChangeNode	tests/Aquatests.cs	/^		public ChangeNode(string lbl = null, object val = null) $/;"	m	class:Aquatests.ChangeNode
 ChangeNode	tests/Aquatests.cs	/^	class ChangeNode : Node {$/;"	c	class:Aquatests
 ConditionalHelpers	core/ConditionalHelpers.cs	/^class ConditionalHelpers {$/;"	c
@@ -37,14 +37,16 @@ Init	core/Aquaforms.cs	/^	static ValueStore Init(Form f) {$/;"	m	class:Aquaforms
 InputName	tests/Aquatests.cs	/^		public string InputName, Notes;$/;"	f	class:Aquatests.Node
 Lane	tests/Aquatests.cs	/^	static MoveNode Lane = null;$/;"	f	class:Aquatests	file:
 LastMove	tests/Aquatests.cs	/^			LastMove;$/;"	f	class:Aquatests.MoveNode
+LastSide	tests/Aquatests.cs	/^			LastSide$/;"	f	class:Aquatests.ChangeNode
+LastSide	tests/Aquatests.cs	/^			LastSide;$/;"	f	class:Aquatests.MoveNode
 Main	Program.cs	/^	static void Main(params string [] args) {$/;"	m	class:Program	file:
 MakeChange	tests/Aquatests.cs	/^	static void MakeChange(ref MoveNode m, string lbl, object val) =>$/;"	m	class:Aquatests	file:
 MoveNode	tests/Aquatests.cs	/^		public MoveNode(string inputName = null, object val = null) $/;"	m	class:Aquatests.MoveNode
 MoveNode	tests/Aquatests.cs	/^	class MoveNode : Node {$/;"	c	class:Aquatests
-MovesCount	tests/Aquatests.cs	/^		public int MovesCount;$/;"	f	class:Aquatests.MoveNode
+MovesCount	tests/Aquatests.cs	/^		public int MovesCount, SideCount;$/;"	f	class:Aquatests.MoveNode
 Next	core/Value.cs	/^	public readonly Value Next;$/;"	f	class:Value
 Next	tests/Aquatests.cs	/^			Next, $/;"	f	class:Aquatests.MoveNode
-Next	tests/Aquatests.cs	/^		public SideNode Next;$/;"	f	class:Aquatests.SideNode
+Next	tests/Aquatests.cs	/^		public SideEffectNode Next;$/;"	f	class:Aquatests.SideEffectNode
 Node	tests/Aquatests.cs	/^		public Node() {}$/;"	m	class:Aquatests.Node
 Node	tests/Aquatests.cs	/^		public Node(string inputName, object val) {$/;"	m	class:Aquatests.Node
 Node	tests/Aquatests.cs	/^	class Node {$/;"	c	class:Aquatests
@@ -52,15 +54,21 @@ Notes	tests/Aquatests.cs	/^		public string InputName, Notes;$/;"	f	class:Aquates
 PrintSolidLine	core/Aquaforms.cs	/^	static void PrintSolidLine() => $/;"	m	class:Aquaforms	file:
 Program	Program.cs	/^class Program {$/;"	c
 RecordChange	tests/Aquatests.cs	/^		public void RecordChange(ChangeNode change) {$/;"	m	class:Aquatests.MoveNode
+RecordChange	tests/Aquatests.cs	/^		public void RecordChange(string inputName, object val) =>$/;"	m	class:Aquatests.MoveNode
 RecordMove	tests/Aquatests.cs	/^		public void RecordMove(MoveNode mv) {$/;"	m	class:Aquatests.MoveNode
-RecordSide	tests/Aquatests.cs	/^		public void RecordSide(ChangeNode change) {$/;"	m	class:Aquatests.MoveNode
-RecordSide	tests/Aquatests.cs	/^		public void RecordSide(SideNode side) {$/;"	m	class:Aquatests.ChangeNode
+RecordSide	tests/Aquatests.cs	/^		public void RecordSide(SideEffectNode se) {$/;"	m	class:Aquatests.ChangeNode
+RecordSide	tests/Aquatests.cs	/^		public void RecordSide(SideEffectNode se) {$/;"	m	class:Aquatests.MoveNode
+RecordSide	tests/Aquatests.cs	/^		public void RecordSide(string inputName, object val) =>$/;"	m	class:Aquatests.ChangeNode
+RecordSide	tests/Aquatests.cs	/^		public void RecordSide(string inputName, object val) =>$/;"	m	class:Aquatests.MoveNode
 Set	core/ValueStore.cs	/^	public void Set(Control ctrl, object val) {$/;"	m	class:ValueStore
 SetPositionOnScreen	core/AquaCmds.cs	/^	void SetPositionOnScreen(Form host) {$/;"	m	class:AquaCmds	file:
-Side	tests/Aquatests.cs	/^		public SideNode   Side;$/;"	f	class:Aquatests.ChangeNode
-Side	tests/Aquatests.cs	/^		public SideNode Side;$/;"	f	class:Aquatests.MoveNode
-SideNode	tests/Aquatests.cs	/^		public SideNode(string lbl = null, object val = null) $/;"	m	class:Aquatests.SideNode
-SideNode	tests/Aquatests.cs	/^	class SideNode : Node {$/;"	c	class:Aquatests
+Side	tests/Aquatests.cs	/^			Side, $/;"	f	class:Aquatests.MoveNode
+SideAt	tests/Aquatests.cs	/^		public SideEffectNode SideAt(int idx) {$/;"	m	class:Aquatests.MoveNode
+SideCount	tests/Aquatests.cs	/^		public int MovesCount, SideCount;$/;"	f	class:Aquatests.MoveNode
+SideCount	tests/Aquatests.cs	/^		public int SideCount;$/;"	f	class:Aquatests.ChangeNode
+SideEffect	tests/Aquatests.cs	/^			SideEffect,$/;"	f	class:Aquatests.ChangeNode
+SideEffectNode	tests/Aquatests.cs	/^		public SideEffectNode(string inputName = null, object val = null) $/;"	m	class:Aquatests.SideEffectNode
+SideEffectNode	tests/Aquatests.cs	/^	class SideEffectNode : Node {$/;"	c	class:Aquatests
 SumCtrlsWidth	core/AquaCmds.cs	/^	static int SumCtrlsWidth(Form f, int offset) {$/;"	m	class:AquaCmds	file:
 Unless	core/ConditionalHelpers.cs	/^	public static void Unless (bool cond, Action trueBr, Action falseBr = null) {$/;"	m	class:ConditionalHelpers
 Update	core/ValueStore.cs	/^	public bool Update(Control ctrl, object val) {$/;"	m	class:ValueStore
@@ -72,10 +80,12 @@ Value	tests/Aquatests.cs	/^		public object Value;$/;"	f	class:Aquatests.Node
 ValueStore	core/ValueStore.cs	/^class ValueStore {$/;"	c
 Watch	core/Aquaforms.cs	/^	public static void Watch(Form f) {	$/;"	m	class:Aquaforms
 _head	core/ValueStore.cs	/^	Value _head;$/;"	f	class:ValueStore	file:
-add_change	tests/Aquatests.cs	/^	_ add_change = assert => {$/;"	f	class:Aquatests	file:
-add_move	tests/Aquatests.cs	/^	_ add_move = assert => {$/;"	f	class:Aquatests	file:
-add_side_effect	tests/Aquatests.cs	/^	_ add_side_effect = assert => {$/;"	f	class:Aquatests	file:
 after_each	tests/Aquatests.cs	/^	_ after_each  = assert => {  \/*TODO: Cleanup (if needed). *\/};$/;"	f	class:Aquatests	file:
 before_each	tests/Aquatests.cs	/^	_ before_each = assert => { Lane = new MoveNode(); };$/;"	f	class:Aquatests	file:
 ctrl	core/Aquaforms.cs	/^	static void PrintChange(Control ctrl) =>$/;"	f	class:Aquaforms	file:
+record_change	tests/Aquatests.cs	/^	_ record_change = assert => {$/;"	f	class:Aquatests	file:
+record_move	tests/Aquatests.cs	/^	_ record_move = assert => {$/;"	f	class:Aquatests	file:
+record_multiple_side_effects_RELATIVE_TO_MOVE	tests/Aquatests.cs	/^	_ record_multiple_side_effects_RELATIVE_TO_MOVE = assert => {$/;"	f	class:Aquatests	file:
+record_side_effect_RELATIVE_TO_CHANGE	tests/Aquatests.cs	/^	_ record_side_effect_RELATIVE_TO_CHANGE = assert => {$/;"	f	class:Aquatests	file:
+record_side_effect_RELATIVE_TO_MOVE	tests/Aquatests.cs	/^	_ record_side_effect_RELATIVE_TO_MOVE = assert => {$/;"	f	class:Aquatests	file:
 val	core/ValueStore.cs	/^	static string Str(object val) =>$/;"	f	class:ValueStore	file:

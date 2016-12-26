@@ -14,7 +14,7 @@ class Aquatests {
 
 		public Node(string inputName, object val) {
 			InputName = inputName;
-			Value = val;
+			Value     = val;
 		}
 
 		public object Value;
@@ -36,6 +36,10 @@ class Aquatests {
 			: base(inputName, val) {}
 
 		public SideEffectNode Next;
+
+		public override string  ToString() {
+			return $"{InputName}: {Value}";
+		}
 	}
 
 	/// This nodes are used to represent changes.
@@ -72,12 +76,6 @@ class Aquatests {
 				SideEffect = se;
 				return;
 			}
-
-			SideEffectNode tail = SideEffect.Next;
-			while (tail != null) {
-				tail = tail.Next;
-			}
-			tail.Next = se;
 		}
 	}
 
@@ -121,6 +119,7 @@ class Aquatests {
 
 		public int MovesCount, SideCount;
 
+
 		/// Records a move.
 		public void RecordMove(MoveNode mv) {
 			MovesCount++;
@@ -153,19 +152,39 @@ class Aquatests {
 
 		/// Records a Side Effect **RELATIVE TO THE MOVE**.
 		public void RecordSide(SideEffectNode se) {
+			DieIf(se == null, "Side effect can't be null.");
+
 			SideCount ++;
 			LastSide = se;
 
 			if (Side == null) { // First side effect;
 				Side = se;
-				return;
 			}
+			else {
+				var last = Side;
+				while (last.Next != null)
+					last = last.Next;
+				last.Next = se;
+			}
+		}
 
-			SideEffectNode tail = Side.Next;
-			while (tail != null) {
-				tail = tail.Next;
+		public SideEffectNode SideAt(int idx) {
+			DieIf(idx >= SideCount, 
+				$"Idx {idx} is out of range. Must be {SideCount - 1} or less.");
+
+			// Seguir desde aca.
+			// Los nodos se estan agregando correctamente... por que falla?
+			SideEffectNode node = Side;
+			int i = 0;
+			while (i < SideCount) {
+				DieIf(node == null, $"Internal Err. Node at {i}");
+				Write($"node at({i}) => {node}\n");
+				if (i == idx) 
+					break;
+				++i;
+				node = node.Next;
 			}
-			tail.Next = se;
+			return node;
 		}
 	}
 
@@ -208,9 +227,8 @@ class Aquatests {
 		assert.Equal(321,   lmv.LastSide.Value);
 	};
 
-	// TODO: Record more than one change REL TO THE MOVE.
-	// TODO: Record more than one change REL TO THE CHANGE.
 
+	// TODO: Record more than one change REL TO THE CHANGE.
 	_ record_side_effect_RELATIVE_TO_CHANGE = assert => {
 		var mv1   = new MoveNode();
 		mv1.RecordChange("prc", 123);
@@ -220,5 +238,17 @@ class Aquatests {
 		var lchng = Lane.LastMove.Change;
 		assert.Equal("tot", lchng.LastSide.InputName);
 		assert.Equal(321,   lchng.LastSide.Value);
+	};
+
+	_ record_multiple_side_effects_RELATIVE_TO_MOVE = assert => {
+		var mv1   = new MoveNode();
+		mv1.RecordSide("tot", 321);
+		mv1.RecordSide("tax", 62.3);
+
+		// assert.Equal("tot", mv1.SideAt(0).InputName);
+		// assert.Equal(321,   mv1.SideAt(0).Value);
+
+		assert.Equal("tax", mv1.SideAt(1).InputName);
+		assert.Equal(62.3,  mv1.SideAt(1).Value);
 	};
 }
