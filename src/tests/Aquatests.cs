@@ -119,6 +119,27 @@ class Aquatests {
 
 		public int MovesCount, SideCount;
 
+		public MoveNode MoveAt(int idx) {
+			DieIf(idx >= MovesCount, 
+				"Idx must be less than {MovesCount}.");
+
+			var last = Next;
+			if (idx == 0)
+				return last;
+
+			DieIf(last == null, "Internal error. Last can't be null.");
+
+			int i = 0;
+			while(last.Next != null) {
+				last = last.Next;
+				i++;
+				if (i == idx)
+					break;
+			}
+
+			return last;
+			
+		}
 
 		/// Records a move.
 		public void RecordMove(MoveNode mv) {
@@ -130,11 +151,11 @@ class Aquatests {
 				return;
 			}
 
-			MoveNode tail = Next;
-			while (tail.Next != null)
-				tail = tail.Next;
+			var last = Next;
+			while (last.Next != null)
+				last = last.Next;
 
-			tail.Next = mv;
+			last.Next = mv;
 		}
 
 		/// Records a Change **RELATIVE TO THE MOVE**.
@@ -217,6 +238,20 @@ class Aquatests {
 		assert.Equal(123,   Lane.LastMove.Change.Value);
 	};
 
+	_ record_multiple_moves = assert => {
+		var m1   = new MoveNode();
+		var m2   = new MoveNode();
+		var m3   = new MoveNode();
+		Lane.RecordMove(m1);
+		Lane.RecordMove(m2);
+		Lane.RecordMove(m3);
+		assert.Equal(3,     Lane.MovesCount);
+
+		assert.Equal(m1, Lane.MoveAt(0));
+		assert.Equal(m2, Lane.MoveAt(1));
+		assert.Equal(m3, Lane.MoveAt(2));
+	};
+
 	_ record_side_effect_RELATIVE_TO_MOVE = assert => {
 		var mv1   = new MoveNode();
 		mv1.RecordSide("tot", 321);
@@ -245,8 +280,8 @@ class Aquatests {
 		mv1.RecordSide("tot", 321);
 		mv1.RecordSide("tax", 62.3);
 
-		// assert.Equal("tot", mv1.SideAt(0).InputName);
-		// assert.Equal(321,   mv1.SideAt(0).Value);
+		assert.Equal("tot", mv1.SideAt(0).InputName);
+		assert.Equal(321,   mv1.SideAt(0).Value);
 
 		assert.Equal("tax", mv1.SideAt(1).InputName);
 		assert.Equal(62.3,  mv1.SideAt(1).Value);
