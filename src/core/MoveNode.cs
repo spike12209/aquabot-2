@@ -113,12 +113,12 @@ public class MoveNode : Node {
 
 	public SideEffectNode SideAt(int idx) {
 		DieIf(idx >= SideCount, 
-				$"Idx {idx} is out of range. Must be {SideCount - 1} or less.");
+			$"Idx {idx} is out of range. Must be {SideCount - 1} or less.");
 
 		var node = FirstSideEffect;
 		int i = 0;
 		while (i < SideCount) {
-			DieIf(node == null, $"Internal Err. Node at {i}");
+			DieIf(node == null, $"Internal Err. Node can't be null (at {i}).");
 			if (i == idx) 
 				break;
 			++i;

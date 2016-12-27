@@ -61,7 +61,6 @@ class Aquatests {
 	};
 
 
-	// TODO: Record more than one change REL TO THE CHANGE.
 	_ record_side_effect_RELATIVE_TO_CHANGE = assert => {
 		var mv1   = new MoveNode();
 		mv1.RecordChange("prc", 123);
@@ -71,6 +70,20 @@ class Aquatests {
 		var lchng = Lane.LastMove.Change;
 		assert.Equal("tot", lchng.LastSide.InputName);
 		assert.Equal(321,   lchng.LastSide.Value);
+	};
+
+	_ record_multple_side_effects_RELATIVES_TO_CHANGE = assert => {
+		var mv1   = new MoveNode();
+		mv1.RecordChange("prc", 123);
+		// There are two side effects when price changes.
+		mv1.Change.RecordSide("tot", 321);
+		mv1.Change.RecordSide("tax", 62.3);
+
+		assert.Equal("tot", mv1.Change.SideAt(0).InputName);
+		assert.Equal(321,   mv1.Change.SideAt(0).Value);
+
+		assert.Equal("tax", mv1.Change.SideAt(1).InputName);
+		assert.Equal(62.3,  mv1.Change.SideAt(1).Value);
 	};
 
 	_ record_multiple_side_effects_RELATIVE_TO_MOVE = assert => {
