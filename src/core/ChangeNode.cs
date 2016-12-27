@@ -15,7 +15,7 @@ public class ChangeNode : Node {
 
 	public SideEffectNode 
 		/// Points to the first side effect produced by the change.
-		SideEffect,
+		FirstSideEffect,
 		/// Points to the last side effect produced by the change.
 		LastSide
 		;
@@ -29,9 +29,13 @@ public class ChangeNode : Node {
 		SideCount ++;
 		LastSide = se;
 
-		if (SideEffect == null) { // First side effect;
-			SideEffect = se;
+		if (FirstSideEffect == null) {
+			FirstSideEffect = se;
 			return;
+		} 
+		else {
+			//TODO: Find last and set se.
+			
 		}
 	}
 }

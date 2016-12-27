@@ -34,7 +34,7 @@ public class MoveNode : Node {
 	public SideEffectNode 
 		/// Points to the first side effect produced by the move.
 		/// One move may produce more than one side effect.
-		Side, 
+		FirstSideEffect, 
 		/// Points to the last side effect. Produced by MOVE.
 		LastSide;
 	// ------------------------------------------------------
@@ -46,22 +46,21 @@ public class MoveNode : Node {
 		DieIf(idx >= MovesCount, 
 				"Idx must be less than {MovesCount}.");
 
-		var last = Next;
+		var node = Next;
 		if (idx == 0)
-			return last;
+			return node;
 
-		DieIf(last == null, "Internal error. Last can't be null.");
+		DieIf(node == null, "Internal error. Node can't be null.");
 
 		int i = 0;
-		while(last.Next != null) {
-			last = last.Next;
+		while (node.Next != null) {
+			node = node.Next;
 			i++;
 			if (i == idx)
 				break;
 		}
 
-		return last;
-
+		return node;
 	}
 
 	/// Records a move.
@@ -74,11 +73,11 @@ public class MoveNode : Node {
 			return;
 		}
 
-		var last = Next;
-		while (last.Next != null)
-			last = last.Next;
+		var node = Next;
+		while (node.Next != null)
+			node = node.Next;
 
-		last.Next = mv;
+		node.Next = mv;
 	}
 
 	/// Records a Change **RELATIVE TO THE MOVE**.
@@ -101,14 +100,14 @@ public class MoveNode : Node {
 		SideCount ++;
 		LastSide = se;
 
-		if (Side == null) { // First side effect;
-			Side = se;
+		if (FirstSideEffect == null) { // First side effect;
+			FirstSideEffect = se;
 		}
 		else {
-			var last = Side;
-			while (last.Next != null)
-				last = last.Next;
-			last.Next = se;
+			var node = FirstSideEffect;
+			while (node.Next != null)
+				node = node.Next;
+			node.Next = se;
 		}
 	}
 
@@ -116,13 +115,10 @@ public class MoveNode : Node {
 		DieIf(idx >= SideCount, 
 				$"Idx {idx} is out of range. Must be {SideCount - 1} or less.");
 
-		// Seguir desde aca.
-		// Los nodos se estan agregando correctamente... por que falla?
-		SideEffectNode node = Side;
+		var node = FirstSideEffect;
 		int i = 0;
 		while (i < SideCount) {
 			DieIf(node == null, $"Internal Err. Node at {i}");
-			Write($"node at({i}) => {node}\n");
 			if (i == idx) 
 				break;
 			++i;
