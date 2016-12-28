@@ -1,6 +1,7 @@
 using static Atropos;
 
 /// This nodes are used to represent changes.
+/// (One move can have at most one change).
 /// move 1
 ///	   \
 ///	  move 2 ----- change 2.1
@@ -14,21 +15,20 @@ public class ChangeNode : Node {
 
 	public int SideCount;
 
-	public SideEffectNode 
-		/// Points to the first side effect produced by the change.
-		FirstSideEffect,
-		/// Points to the last side effect produced by the change.
-		LastSide
-		;
+	/// Points to the first side effect produced by the change.
+	public SideEffectNode FirstSideEffect;
+
+	public SideEffectNode GetLastSideEffect() =>
+		SideAt(SideCount);
 
 	public SideEffectNode SideAt(int idx) {
+		DieIf(SideCount == 0, "There is no side effects for this change.");
 		DieIf(idx >= SideCount, 
 			$"Idx {idx} is out of range. Must be {SideCount - 1} or less.");
 
 		var node = FirstSideEffect;
 		int i = 0;
 		while (i < SideCount) {
-			DieIf(node == null, $"Internal Err. Node can't be null (at {i}).");
 			if (i == idx) 
 				break;
 			++i;
@@ -38,15 +38,14 @@ public class ChangeNode : Node {
 	}
 
 	/// Records a Side Effect **RELATIVE TO THE CHANGE**.
-	public void RecordSide(string inputName, object val) =>
+	public SideEffectNode RecordSide(string inputName, object val) =>
 		RecordSide(new SideEffectNode(inputName, val));
 
 	/// Records a Side Effect **RELATIVE TO THE CHANGE**.
-	public void RecordSide(SideEffectNode se) {
+	public SideEffectNode RecordSide(SideEffectNode se) {
 		DieIf(se == null, "Side effect can't be null.");
 
 		SideCount ++;
-		LastSide = se;
 
 		if (FirstSideEffect == null) { // First side effect;
 			FirstSideEffect = se;
@@ -57,5 +56,6 @@ public class ChangeNode : Node {
 				node = node.Next;
 			node.Next = se;
 		}
+		return se;
 	}
 }

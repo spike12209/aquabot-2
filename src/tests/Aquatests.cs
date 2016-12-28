@@ -1,103 +1,133 @@
 #pragma warning disable 414
 
 using System;
-using static Atropos;
+
 using static System.Console;
+using static Atropos;
+using static MoveNode;
 
 using _ = System.Action<Contest.Core.Runner>;
 
 class Aquatests {
 
-	static MoveNode Lane = null;
+	static Lane Lane;
 
 	static void MakeChange(ref MoveNode m, string lbl, object val) =>
 		m.Change = new ChangeNode(lbl, val);
 
-	_ before_each = assert => { Lane = new MoveNode(); };
-
-	_ after_each  = assert => {  /*TODO: Cleanup (if needed). */};
+	_ before_each = test =>
+		Lane = new Lane();
 	
 	_ record_move = assert => {
-		var m1 = new MoveNode();
-		var m2 = new MoveNode();
+		var m1 = Lane.MoveTo("foo");
+		var m2 = Lane.MoveTo("bar");
 
-		Lane.RecordMove(m1);
-		Lane.RecordMove(m2);
 		assert.Equal(2,  Lane.MovesCount);
-		assert.Equal(m2, Lane.LastMove);
+		assert.Equal(m2, Lane.GetLastMove());
 	};
 
 	_ record_change = assert => {
-		var m1   = new MoveNode();
-		MakeChange(ref m1, "prc", 123);
-		Lane.RecordMove(m1);
-		assert.Equal(1,     Lane.MovesCount);
-		assert.Equal("prc", Lane.LastMove.Change.InputName);
-		assert.Equal(123,   Lane.LastMove.Change.Value);
+		var m1  = Lane.MoveTo("prc");
+		var ch1 = m1.RecordChange(123);
+
+		assert.Equal(1,   Lane.MovesCount);
+		assert.Equal(ch1, Lane.GetLastMove().Change);
 	};
 
 	_ record_multiple_moves = assert => {
-		var m1   = new MoveNode();
-		var m2   = new MoveNode();
-		var m3   = new MoveNode();
-		Lane.RecordMove(m1);
-		Lane.RecordMove(m2);
-		Lane.RecordMove(m3);
-		assert.Equal(3,     Lane.MovesCount);
+		var m1 = Lane.MoveTo("foo");
+		var m2 = Lane.MoveTo("bar");
+		var m3 = Lane.MoveTo("baz");
 
+		assert.Equal(3,  Lane.MovesCount);
 		assert.Equal(m1, Lane.MoveAt(0));
 		assert.Equal(m2, Lane.MoveAt(1));
 		assert.Equal(m3, Lane.MoveAt(2));
 	};
 
 	_ record_side_effect_RELATIVE_TO_MOVE = assert => {
-		var mv1   = new MoveNode();
-		mv1.RecordSide("tot", 321);
-		Lane.RecordMove(mv1);
-		var lmv = Lane.LastMove;
-		assert.Equal(1, lmv.SideCount);
-		assert.Equal("tot", lmv.LastSide.InputName);
-		assert.Equal(321,   lmv.LastSide.Value);
+		var mv1 = Lane.MoveTo("prc");
+		var se1 = mv1.RecordSide("tot", 321);
+
+		assert.Equal(1,   Lane.GetLastMove().SideCount);
+		assert.Equal(se1, Lane.GetLastMove().GetLastSideEffect());
 	};
 
 
 	_ record_side_effect_RELATIVE_TO_CHANGE = assert => {
-		var mv1   = new MoveNode();
-		mv1.RecordChange("prc", 123);
-		mv1.Change.RecordSide("tot", 321);
-		Lane.RecordMove(mv1);
+		var mv1 = Lane.MoveTo("prc");
+		var ch1 = mv1.RecordChange(123);
+		var se1 = ch1.RecordSide("tot", 321);
 
-		var lchng = Lane.LastMove.Change;
-		assert.Equal("tot", lchng.LastSide.InputName);
-		assert.Equal(321,   lchng.LastSide.Value);
+		var lastch = Lane.GetLastMove().Change;
+		assert.Equal(se1, lastch.GetLastSideEffect());
 	};
 
 	_ record_multple_side_effects_RELATIVES_TO_CHANGE = assert => {
-		var mv1   = new MoveNode();
-		mv1.RecordChange("prc", 123);
+		var mv1 = Lane.MoveTo("prc");
+		mv1.RecordChange(100);
 		// There are two side effects when price changes.
-		mv1.Change.RecordSide("tot", 321);
-		mv1.Change.RecordSide("tax", 62.3);
+		var se1 = mv1.Change.RecordSide("tot", 363);
+		var se2 = mv1.Change.RecordSide("tax", 63);
 
-		assert.Equal("tot", mv1.Change.SideAt(0).InputName);
-		assert.Equal(321,   mv1.Change.SideAt(0).Value);
-
-		assert.Equal("tax", mv1.Change.SideAt(1).InputName);
-		assert.Equal(62.3,  mv1.Change.SideAt(1).Value);
+		assert.Equal(se1, mv1.Change.SideAt(0).InputName);
+		assert.Equal(se2, mv1.Change.SideAt(1).InputName);
 	};
 
 	_ record_multiple_side_effects_RELATIVE_TO_MOVE = assert => {
-		var mv1   = new MoveNode();
-		mv1.RecordSide("tot", 321);
-		mv1.RecordSide("tax", 62.3);
+		var mv1 = Lane.MoveTo("prc");
+		var se1 = mv1.RecordSide("tot", 363);
+		var se2 = mv1.RecordSide("tax",  63);
 
-		assert.Equal("tot", mv1.SideAt(0).InputName);
-		assert.Equal(321,   mv1.SideAt(0).Value);
+		assert.Equal(se1, mv1.SideAt(0).InputName);
+		assert.Equal(se2, mv1.SideAt(1).Value);
 
-		assert.Equal("tax", mv1.SideAt(1).InputName);
-		assert.Equal(62.3,  mv1.SideAt(1).Value);
+	};
+
+	// Seguir desde aca
+	// Create Replay Script
+	//
+	// Instruction set
+	// set:      name, value //<= set input value on name
+	// moveto:   name        //<= move to name
+	// assert:   name, value //<= assert input value       
+	// shownote: name, note  //<= shows note attached to name.
+	// stop:                 //<= Pauses the execution. (Dbg step by step).
+
+
+	// When replaying on debug mode, each instruction is followed by stop call.
+	// This allows users to see notes on each step
+	//
+	//
+	// When an assert pass, we set the control's font to bold green. When it 
+	// fails, to red bold. This is a neat way to signal successes and errors.
+	_ create_replay_script = assert => {
+		
+		var lane = new Lane();
+
+		// moveto: prc
+		var mv1   = lane.MoveTo("prc");
+		// set: prc, 123
+		var ch1  = mv1.RecordChange(123);
+		// assert: net, 0
+		ch1.RecordSide("net", 0); // <= prc * qty
+		// assert: tax, 0
+		ch1.RecordSide("tax", 0); // <= prc * qty * .21
+		// assert: tot, 0
+		ch1.RecordSide("tot", 0); // <= net + tax
+
+
+		var mv2   = lane.MoveTo("qty");
+		mv2.RecordChange(3);
+		mv2.Change.RecordSide("net", 300);
+		mv2.Change.RecordSide("tax", 63);
+		mv2.Change.RecordSide("tot", 363);
+
+		var script = lane.CreateScript();
 	};
 
 
-	// Seguir desde aca. Incorporar https://github.com/adrianaisemberg/CLAP
+
+
+
 }

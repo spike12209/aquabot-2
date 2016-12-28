@@ -14,14 +14,13 @@ public class MoveNode : Node {
 	public MoveNode(string inputName = null, object val = null) 
 		: base(inputName, val) {}
 
-	public MoveNode 
-		/// Points to the next move.
-		Next, 
-		/// Points to the last move.
-		LastMove;
+	public MoveNode NextMove;
 
+	// ==========================================================
+	// IMPORTANT:
+	// ==========================================================
 	// +----------------------------------------------------+
-	// | IMPORTANT: Change and Side are mutualy exclusive.  |
+	// | Change and FirstSideEffect are mutualy exclusive.  |
 	// | If a change has side effects, those side effects   |
 	// | start at the change node, *NOT* at the move.       |
 	// | Sometimes moves cause side effects, in those cases |
@@ -30,75 +29,25 @@ public class MoveNode : Node {
 	// +----------------------------------------------------+
 	public ChangeNode Change; // One move == One Change
 
+	/// Points to the first side effect produced by the move.
+	/// One move may produce more than one side effect.
+	public SideEffectNode FirstSideEffect;
+	// ==========================================================
 
-	public SideEffectNode 
-		/// Points to the first side effect produced by the move.
-		/// One move may produce more than one side effect.
-		FirstSideEffect, 
-		/// Points to the last side effect. Produced by MOVE.
-		LastSide;
-	// ------------------------------------------------------
-
-	public int MovesCount, SideCount;
-
-	// TODO: Review err messages. ie. idx == 0.
-	public MoveNode MoveAt(int idx) {
-		DieIf(idx >= MovesCount, 
-				"Idx must be less than {MovesCount}.");
-
-		var node = Next;
-		if (idx == 0)
-			return node;
-
-		DieIf(node == null, "Internal error. Node can't be null.");
-
-		int i = 0;
-		while (node.Next != null) {
-			node = node.Next;
-			i++;
-			if (i == idx)
-				break;
-		}
-
-		return node;
-	}
-
-	/// Records a move.
-	public void RecordMove(MoveNode mv) {
-		MovesCount++;
-		LastMove = mv;
-
-		if (Next == null) { // First move.
-			Next = mv;
-			return;
-		}
-
-		var node = Next;
-		while (node.Next != null)
-			node = node.Next;
-
-		node.Next = mv;
-	}
+	public int SideCount;
 
 	/// Records a Change **RELATIVE TO THE MOVE**.
-	public void RecordChange(string inputName, object val) =>
-		RecordChange(new ChangeNode(inputName, val));
-
-	/// Records a Change **RELATIVE TO THE MOVE**.
-	public void RecordChange(ChangeNode change) {
-		Change = change;
-	}
+	public ChangeNode RecordChange(object val) =>
+		(Change = new ChangeNode(InputName, val));
 
 	/// Records a Side Effect **RELATIVE TO THE MOVE**.
-	public void RecordSide(string inputName, object val) =>
+	public SideEffectNode RecordSide(string inputName, object val) =>
 		RecordSide(new SideEffectNode(inputName, val));
 
 	/// Records a Side Effect **RELATIVE TO THE MOVE**.
-	public void RecordSide(SideEffectNode se) {
+	public SideEffectNode RecordSide(SideEffectNode se) {
 		DieIf(se == null, "Side effect can't be null.");
-
 		SideCount ++;
-		LastSide = se;
 
 		if (FirstSideEffect == null) { // First side effect;
 			FirstSideEffect = se;
@@ -109,16 +58,20 @@ public class MoveNode : Node {
 				node = node.Next;
 			node.Next = se;
 		}
+		return se;
 	}
 
+	/// Refers to side effects relatives TO THE MOVE.
 	public SideEffectNode SideAt(int idx) {
+		DieIf(SideCount == 0, 
+			"There are no side effect relative to this move.");
+
 		DieIf(idx >= SideCount, 
 			$"Idx {idx} is out of range. Must be {SideCount - 1} or less.");
 
 		var node = FirstSideEffect;
 		int i = 0;
 		while (i < SideCount) {
-			DieIf(node == null, $"Internal Err. Node can't be null (at {i}).");
 			if (i == idx) 
 				break;
 			++i;
@@ -126,4 +79,7 @@ public class MoveNode : Node {
 		}
 		return node;
 	}
+
+	public SideEffectNode GetLastSideEffect() =>
+		SideAt(SideCount - 1);
 }
