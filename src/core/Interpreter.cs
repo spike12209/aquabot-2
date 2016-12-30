@@ -27,6 +27,10 @@ public class Interpreter {
 	/// It dies if the command doesn't exists.
 	void DispatchCmd(Form target, string cmd, params string[] args) {
 
+		DieIf(target == null, "Target form can't be null.");
+		DieIf(IsNullOrEmpty(cmd), "Cmd is required.");
+
+		cmd = cmd.ToLower();
 		Write($"Cmd {cmd}\n");
 		switch (cmd) {
 			case "move:": 
