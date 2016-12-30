@@ -128,6 +128,33 @@ class Aquatests {
 	};
 
 
+	_ eval_script = assert => {
+		var inter = new Interpreter();
+		const string src = @"
+			focus:  prc
+			change: 123
+			move:
+			focus:  qty
+			change: 3
+			move:
+			assert: tot, 369
+			";
+
+		int countch = 0, countc = 0, counta = 0, countf = 0;
+
+		inter.Move   = () => countc++;
+		inter.Focus  = name => countf++;
+		inter.Change = val  => countch++;
+		inter.Assert = (name, val) => counta++;
+
+		inter.Eval(src);
+
+		assert.Equal(2, countf); 
+		assert.Equal(2, countc);
+		assert.Equal(2, countch);
+		assert.Equal(1, counta);
+	
+	};
 
 
 
