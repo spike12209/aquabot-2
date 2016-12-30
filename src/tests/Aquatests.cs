@@ -1,6 +1,7 @@
 #pragma warning disable 414
 
 using System;
+using System.Windows.Forms;
 
 using static System.Console;
 using static Atropos;
@@ -142,12 +143,13 @@ class Aquatests {
 
 		int countch = 0, countc = 0, counta = 0, countf = 0;
 
-		inter.Move   = () => countc++;
-		inter.Focus  = name => countf++;
-		inter.Change = val  => countch++;
-		inter.Assert = (name, val) => counta++;
+		inter.Move   = target => countc++;
+		inter.Focus  = (target, name) => countf++;
+		inter.Change = (target, val)  => countch++;
+		inter.Assert = (target, name, val) => counta++;
 
-		inter.Eval(src);
+		var f = new Form();
+		inter.Eval(src, f);
 
 		assert.Equal(2, countf); 
 		assert.Equal(2, countc);

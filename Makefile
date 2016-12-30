@@ -19,7 +19,8 @@ build: ./src/**/*.cs
 		mcs ./src/tests/*.cs /target:library /out:./bin/aquatests.dll \
 		/r:./lib/Contest.Core.dll \
 		/r:./lib/atropos.dll \
-		/r:./bin/aquaforms.dll; \
+		/r:./bin/aquaforms.dll \
+		/r:System.Windows.Forms; \
 	fi;
 
 test:
