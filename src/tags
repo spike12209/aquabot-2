@@ -23,7 +23,8 @@ ChangeNode	core/ChangeNode.cs	/^public class ChangeNode : Node {$/;"	c
 ConditionalHelpers	core/ConditionalHelpers.cs	/^class ConditionalHelpers {$/;"	c
 CreateBtn	core/AquaCmds.cs	/^	static Button CreateBtn(string text, Action onClick, Control previous) {$/;"	m	class:AquaCmds	file:
 CreateCtrls	Program.cs	/^	static void CreateCtrls(Form f) {$/;"	m	class:Program	file:
-CreateScript	core/Lane.cs	/^	public string CreateScript() => "TODO:....";$/;"	m	class:Lane
+CreateScript	core/Lane.cs	/^	public string CreateScript() {$/;"	m	class:Lane
+CreateScript	core/MoveNode.cs	/^	public void CreateScript(StringWriter buffer) {$/;"	m	class:MoveNode
 Ctrl	core/Value.cs	/^	public readonly Control Ctrl;$/;"	f	class:Value
 EndFrame	core/Aquaforms.cs	/^	static void EndFrame() {$/;"	m	class:Aquaforms	file:
 FirstMove	core/Lane.cs	/^		FirstMove,$/;"	f	class:Lane
@@ -61,6 +62,7 @@ Node	core/Node.cs	/^public class Node {$/;"	c
 Notes	core/Node.cs	/^	public string InputName, Notes;$/;"	f	class:Node
 PrintSolidLine	core/Aquaforms.cs	/^	static void PrintSolidLine() => $/;"	m	class:Aquaforms	file:
 Program	Program.cs	/^class Program {$/;"	c
+RecordChange	core/MoveNode.cs	/^	public ChangeNode RecordChange(object val) {$/;"	m	class:MoveNode
 RecordSide	core/ChangeNode.cs	/^	public SideEffectNode RecordSide(SideEffectNode se) {$/;"	m	class:ChangeNode
 RecordSide	core/ChangeNode.cs	/^	public SideEffectNode RecordSide(string inputName, object val) =>$/;"	m	class:ChangeNode
 RecordSide	core/MoveNode.cs	/^	public SideEffectNode RecordSide(SideEffectNode se) {$/;"	m	class:MoveNode
@@ -95,5 +97,4 @@ record_multiple_side_effects_RELATIVE_TO_MOVE	tests/Aquatests.cs	/^	_ record_mul
 record_multple_side_effects_RELATIVES_TO_CHANGE	tests/Aquatests.cs	/^	_ record_multple_side_effects_RELATIVES_TO_CHANGE = assert => {$/;"	f	class:Aquatests	file:
 record_side_effect_RELATIVE_TO_CHANGE	tests/Aquatests.cs	/^	_ record_side_effect_RELATIVE_TO_CHANGE = assert => {$/;"	f	class:Aquatests	file:
 record_side_effect_RELATIVE_TO_MOVE	tests/Aquatests.cs	/^	_ record_side_effect_RELATIVE_TO_MOVE = assert => {$/;"	f	class:Aquatests	file:
-val	core/MoveNode.cs	/^	public ChangeNode RecordChange(object val) =>$/;"	f	class:MoveNode
 val	core/ValueStore.cs	/^	static string Str(object val) =>$/;"	f	class:ValueStore	file:

@@ -1,3 +1,4 @@
+using System.IO;
 using static Atropos;
 using static System.Console;
 
@@ -37,8 +38,14 @@ public class MoveNode : Node {
 	public int SideCount;
 
 	/// Records a Change **RELATIVE TO THE MOVE**.
-	public ChangeNode RecordChange(object val) =>
-		(Change = new ChangeNode(InputName, val));
+	public ChangeNode RecordChange(object val) {
+		DieIf(FirstSideEffect != null, 
+				"Can't have change and side effects at the move level.");
+		DieIf(Change != null, 
+				"Can't update the change. (Once set, is readonly).");
+
+		return (Change = new ChangeNode(InputName, val));
+	}
 
 	/// Records a Side Effect **RELATIVE TO THE MOVE**.
 	public SideEffectNode RecordSide(string inputName, object val) =>
@@ -47,6 +54,8 @@ public class MoveNode : Node {
 	/// Records a Side Effect **RELATIVE TO THE MOVE**.
 	public SideEffectNode RecordSide(SideEffectNode se) {
 		DieIf(se == null, "Side effect can't be null.");
+		DieIf(Change != null, "Can't have change and SE at the MOVE level.");
+
 		SideCount ++;
 
 		if (FirstSideEffect == null) { // First side effect;
@@ -78,6 +87,39 @@ public class MoveNode : Node {
 			node = node.Next;
 		}
 		return node;
+	}
+
+	// Este seria el formato de un script.
+	// Cuando hay un cambio.
+	// focus:  precio
+	// change: 123
+	// move:   #<= A donde va lo decide el tab order.
+	//
+	// Cuando hay side effects.
+	// move:
+	// assert: total, 333
+	//
+	// Cuando no tenemos ni cambios ni se, solo emitimos un move.
+	// move:
+	//
+
+	public void CreateScript(StringWriter buffer) {
+		if (Change != null) {
+			buffer.Write($"focus:  {InputName}\n");
+			buffer.Write($"change: {Change.Value}\n");
+			buffer.Write("move:\n");
+		}
+		else if (FirstSideEffect != null) {
+			buffer.Write("move:\n");
+			var se = FirstSideEffect;
+			while (se != null) {
+				buffer.Write($"assert: {se.InputName}, se.Value\n");
+				se = se.Next;
+			}
+		}
+		else {
+			buffer.Write("move:\n");
+		}
 	}
 
 	public SideEffectNode GetLastSideEffect() =>

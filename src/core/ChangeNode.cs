@@ -19,7 +19,7 @@ public class ChangeNode : Node {
 	public SideEffectNode FirstSideEffect;
 
 	public SideEffectNode GetLastSideEffect() =>
-		SideAt(SideCount);
+		SideAt(SideCount -1 );
 
 	public SideEffectNode SideAt(int idx) {
 		DieIf(SideCount == 0, "There is no side effects for this change.");

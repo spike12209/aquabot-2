@@ -70,8 +70,8 @@ class Aquatests {
 		var se1 = mv1.Change.RecordSide("tot", 363);
 		var se2 = mv1.Change.RecordSide("tax", 63);
 
-		assert.Equal(se1, mv1.Change.SideAt(0).InputName);
-		assert.Equal(se2, mv1.Change.SideAt(1).InputName);
+		assert.Equal(se1, mv1.Change.SideAt(0));
+		assert.Equal(se2, mv1.Change.SideAt(1));
 	};
 
 	_ record_multiple_side_effects_RELATIVE_TO_MOVE = assert => {
@@ -79,8 +79,8 @@ class Aquatests {
 		var se1 = mv1.RecordSide("tot", 363);
 		var se2 = mv1.RecordSide("tax",  63);
 
-		assert.Equal(se1, mv1.SideAt(0).InputName);
-		assert.Equal(se2, mv1.SideAt(1).Value);
+		assert.Equal(se1, mv1.SideAt(0));
+		assert.Equal(se2, mv1.SideAt(1));
 
 	};
 
@@ -124,6 +124,7 @@ class Aquatests {
 		mv2.Change.RecordSide("tot", 363);
 
 		var script = lane.CreateScript();
+		Write($"{script}\n");
 	};
 
 

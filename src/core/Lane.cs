@@ -1,3 +1,4 @@
+using System.IO;
 using static Atropos;
 using static System.Console;
 
@@ -46,5 +47,14 @@ public class Lane {
 	public MoveNode GetLastMove() =>
 		MoveAt(MovesCount - 1);
 
-	public string CreateScript() => "TODO:....";
+	public string CreateScript() {
+		var mv   = FirstMove;
+		var strw = new StringWriter();
+		while (mv != null) {
+			mv.CreateScript(strw);
+			mv = mv.NextMove;
+		}
+
+		return strw.ToString();
+	}
 }
