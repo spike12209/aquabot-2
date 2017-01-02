@@ -16,19 +16,19 @@ class Program {
 
 		Control last, txtPrice, txtQty, txtTot;
 		txtPrice      = new TextBox();
-		txtPrice.Name = "Price";
+		txtPrice.Name = "prc";
 		txtPrice.Top  = 20;
 		last          = txtPrice;
 		last.Left     = LEFT;
 
 		txtQty      = new TextBox();
-		txtQty.Name = "Qty";
+		txtQty.Name = "qty";
 		txtQty.Top  = GetTop(last);
 		last        = txtQty;
 		last.Left   = LEFT;
 
 		txtTot      = new TextBox();
-		txtTot.Name = "Tot";
+		txtTot.Name = "tot";
 		txtTot.Top  = GetTop(last);
 		txtTot.Left = LEFT;
 

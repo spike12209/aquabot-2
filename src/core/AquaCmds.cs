@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -55,13 +57,30 @@ class AquaCmds : Form {
 		Location = new Point(x, y);
 	}
 
-	static void OpenScript() {
+	static void Replay (string script, Form host) {
+		try {
+			var inter = new Interpreter();
+			inter.Eval(script, host);
+		}
+		catch(Exception ex) {
+			MessageBox.Show(ex.Message);
+		}
+	}
+
+
+	static string OpenScript() {
 		using (var ofd = new OpenFileDialog()) {
 			ofd.Filter = "Quality assurance test files (*.qat)|*.qat";
 			if (ofd.ShowDialog() == DialogResult.OK) {
+				var script = new StringBuilder();
+				using (var sr = new StreamReader(ofd.OpenFile())) {
+					while(sr.Peek() > 0)
+						script.AppendLine(sr.ReadLine());
+				}
+				return script.ToString();
 			}
-		
 		}
+		return null;
 	}
 
 	public AquaCmds(Form host) {
@@ -71,14 +90,20 @@ class AquaCmds : Form {
 		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnOpen, btnSave;
 		Action record, replay, stop;
 
-		record = ()=> { 
-			Write("TODO: Start recording...\n");
-			btnRep.Enabled = false;
+		string script = null; //<= "Captured" by open used by replay.
+
+		Action open = () => {
+			script = OpenScript();
 		};
 
 		replay = ()=> { 
-			Write("TODO: Start replaying...\n");
 			btnRec.Enabled = false;
+			Replay(script, Owner);
+		};
+
+		record = ()=> { 
+			Write("TODO: Start recording...\n");
+			btnRep.Enabled = false;
 		};
 
 		stop = () => {
@@ -86,11 +111,12 @@ class AquaCmds : Form {
 			btnRep.Enabled = true;
 		};
 
+
 		btnRec   = CreateBtn("Record", record, null);
 		btnRep   = CreateBtn("Replay", replay, btnRec);
 		btnStop  = CreateBtn("Stop",   stop, btnRep);
 		btnNotes = CreateBtn("Notes",  ()=> Write("Adding notes...\n"), btnStop);
-		btnOpen  = CreateBtn("Open",   OpenScript, btnNotes);
+		btnOpen  = CreateBtn("Open",   open, btnNotes);
 		btnSave  = CreateBtn("Save",   ()=> Write("Saving...\n"), btnOpen);
 
 		Controls.Add(btnRec);

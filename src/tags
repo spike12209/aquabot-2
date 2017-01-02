@@ -8,6 +8,7 @@ AquaCmds	core/AquaCmds.cs	/^	public AquaCmds(Form host) {$/;"	m	class:AquaCmds
 AquaCmds	core/AquaCmds.cs	/^class AquaCmds : Form {$/;"	c
 Aquaforms	core/Aquaforms.cs	/^public class Aquaforms {$/;"	c
 Aquatests	tests/Aquatests.cs	/^class Aquatests {$/;"	c
+Assert	core/Interpreter.cs	/^	public Action<Form, string, object> Assert = (target, name, value) => {$/;"	f	class:Interpreter
 AttachTo	core/AquaCmds.cs	/^	public static void AttachTo(Form host) {$/;"	m	class:AquaCmds
 BeginFrame	core/Aquaforms.cs	/^	static void BeginFrame(ValueStore values, Control input) {$/;"	m	class:Aquaforms	file:
 CTRLH	core/AquaCmds.cs	/^		CTRLH   = 30,$/;"	f	class:AquaCmds	file:
@@ -17,20 +18,29 @@ CaptureChangesRec	core/Aquaforms.cs	/^	static void CaptureChangesRec(Control c, 
 CaptureFrame	core/Aquaforms.cs	/^	static void CaptureFrame(Form f, Control sender, ValueStore values) {$/;"	m	class:Aquaforms	file:
 CaptureFrameOther	core/Aquaforms.cs	/^	static void CaptureFrameOther(Form f, ValueStore values) =>$/;"	m	class:Aquaforms	file:
 CaptureInput	core/Aquaforms.cs	/^	static void CaptureInput(Form f, Control c, ValueStore values) =>$/;"	m	class:Aquaforms	file:
+Change	core/Interpreter.cs	/^	public Action<Form, object> Change = (target, newValue) => {$/;"	f	class:Interpreter
 Change	core/MoveNode.cs	/^	public ChangeNode Change; \/\/ One move == One Change$/;"	f	class:MoveNode
 ChangeNode	core/ChangeNode.cs	/^	public ChangeNode(string lbl = null, object val = null) $/;"	m	class:ChangeNode
 ChangeNode	core/ChangeNode.cs	/^public class ChangeNode : Node {$/;"	c
+CleanScript	core/Interpreter.cs	/^	static string CleanScript(string script) =>$/;"	m	class:Interpreter	file:
 ConditionalHelpers	core/ConditionalHelpers.cs	/^class ConditionalHelpers {$/;"	c
 CreateBtn	core/AquaCmds.cs	/^	static Button CreateBtn(string text, Action onClick, Control previous) {$/;"	m	class:AquaCmds	file:
 CreateCtrls	Program.cs	/^	static void CreateCtrls(Form f) {$/;"	m	class:Program	file:
 CreateScript	core/Lane.cs	/^	public string CreateScript() {$/;"	m	class:Lane
 CreateScript	core/MoveNode.cs	/^	public void CreateScript(StringWriter buffer) {$/;"	m	class:MoveNode
 Ctrl	core/Value.cs	/^	public readonly Control Ctrl;$/;"	f	class:Value
+Dispatch	core/Interpreter.cs	/^	void Dispatch(string line, Form target) {$/;"	m	class:Interpreter	file:
+DispatchCmd	core/Interpreter.cs	/^	void DispatchCmd(Form target, string cmd, params string[] args) {$/;"	m	class:Interpreter	file:
 EndFrame	core/Aquaforms.cs	/^	static void EndFrame() {$/;"	m	class:Aquaforms	file:
+Eval	core/Interpreter.cs	/^	public void Eval(string script, Form target) {$/;"	m	class:Interpreter
+Fail	core/Interpreter.cs	/^	static void Fail(Control ctrl, object expected) {$/;"	m	class:Interpreter	file:
+FindCtrl	core/Interpreter.cs	/^	static Control FindCtrl(Control target, string name) {$/;"	m	class:Interpreter	file:
+FindCtrlOrDie	core/Interpreter.cs	/^	static Control FindCtrlOrDie(Form target, string name) {$/;"	m	class:Interpreter	file:
 FirstMove	core/Lane.cs	/^		FirstMove,$/;"	f	class:Lane
 FirstSideEffect	core/ChangeNode.cs	/^	public SideEffectNode FirstSideEffect;$/;"	f	class:ChangeNode
 FirstSideEffect	core/MoveNode.cs	/^	public SideEffectNode FirstSideEffect;$/;"	f	class:MoveNode
 FirstSnapshot	core/Aquaforms.cs	/^	static void FirstSnapshot(Control ctrl, ValueStore values) {$/;"	m	class:Aquaforms	file:
+Focus	core/Interpreter.cs	/^	public Action<Form, string> Focus = (target, name) => {$/;"	f	class:Interpreter
 FramesCount	core/ValueStore.cs	/^	public int FramesCount = 0;$/;"	f	class:ValueStore
 Get	core/ValueStore.cs	/^	public string Get(Control ctrl) {$/;"	m	class:ValueStore
 GetLastMove	core/Lane.cs	/^	public MoveNode GetLastMove() =>$/;"	m	class:Lane
@@ -43,10 +53,12 @@ HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, Control ctrl, Value
 HookCtrls	core/Aquaforms.cs	/^	static void HookCtrls(Form f, ValueStore values) =>$/;"	m	class:Aquaforms	file:
 Init	core/Aquaforms.cs	/^	static ValueStore Init(Form f) {$/;"	m	class:Aquaforms	file:
 InputName	core/Node.cs	/^	public string InputName, Notes;$/;"	f	class:Node
+Interpreter	core/Interpreter.cs	/^public class Interpreter {$/;"	c
 Lane	core/Lane.cs	/^public class Lane {$/;"	c
 Lane	tests/Aquatests.cs	/^	static Lane Lane;$/;"	f	class:Aquatests	file:
 Main	Program.cs	/^	static void Main(params string [] args) {$/;"	m	class:Program	file:
 MakeChange	tests/Aquatests.cs	/^	static void MakeChange(ref MoveNode m, string lbl, object val) =>$/;"	m	class:Aquatests	file:
+Move	core/Interpreter.cs	/^	public Action<Form> Move = target => {$/;"	f	class:Interpreter
 MoveAt	core/Lane.cs	/^	public MoveNode MoveAt(int idx) {$/;"	m	class:Lane
 MoveNode	core/MoveNode.cs	/^	public MoveNode(string inputName = null, object val = null) $/;"	m	class:MoveNode
 MoveNode	core/MoveNode.cs	/^public class MoveNode : Node {$/;"	c
@@ -60,6 +72,8 @@ Node	core/Node.cs	/^	public Node() {}$/;"	m	class:Node
 Node	core/Node.cs	/^	public Node(string inputName, object val) {$/;"	m	class:Node
 Node	core/Node.cs	/^public class Node {$/;"	c
 Notes	core/Node.cs	/^	public string InputName, Notes;$/;"	f	class:Node
+OpenScript	core/AquaCmds.cs	/^	static void OpenScript() {$/;"	m	class:AquaCmds	file:
+Pass	core/Interpreter.cs	/^	static void Pass(Control ctrl) {$/;"	m	class:Interpreter	file:
 PrintSolidLine	core/Aquaforms.cs	/^	static void PrintSolidLine() => $/;"	m	class:Aquaforms	file:
 Program	Program.cs	/^class Program {$/;"	c
 RecordChange	core/MoveNode.cs	/^	public ChangeNode RecordChange(object val) {$/;"	m	class:MoveNode
@@ -76,6 +90,7 @@ SideCount	core/MoveNode.cs	/^	public int SideCount;$/;"	f	class:MoveNode
 SideEffectNode	core/SideEffectNode.cs	/^	public SideEffectNode(string inputName = null, object val = null) $/;"	m	class:SideEffectNode
 SideEffectNode	core/SideEffectNode.cs	/^public class SideEffectNode : Node {$/;"	c
 SumCtrlsWidth	core/AquaCmds.cs	/^	static int SumCtrlsWidth(Form f, int offset) {$/;"	m	class:AquaCmds	file:
+TAB	core/Interpreter.cs	/^	const string TAB = "{TAB}";$/;"	f	class:Interpreter	file:
 ToString	core/SideEffectNode.cs	/^	public override string  ToString() {$/;"	m	class:SideEffectNode
 Unless	core/ConditionalHelpers.cs	/^	public static void Unless (bool cond, Action trueBr, Action falseBr = null) {$/;"	m	class:ConditionalHelpers
 Update	core/ValueStore.cs	/^	public bool Update(Control ctrl, object val) {$/;"	m	class:ValueStore
@@ -90,6 +105,7 @@ _head	core/ValueStore.cs	/^	Value _head;$/;"	f	class:ValueStore	file:
 before_each	tests/Aquatests.cs	/^	_ before_each = test =>$/;"	f	class:Aquatests	file:
 create_replay_script	tests/Aquatests.cs	/^	_ create_replay_script = assert => {$/;"	f	class:Aquatests	file:
 ctrl	core/Aquaforms.cs	/^	static void PrintChange(Control ctrl) =>$/;"	f	class:Aquaforms	file:
+eval_script	tests/Aquatests.cs	/^	_ eval_script = assert => {$/;"	f	class:Aquatests	file:
 record_change	tests/Aquatests.cs	/^	_ record_change = assert => {$/;"	f	class:Aquatests	file:
 record_move	tests/Aquatests.cs	/^	_ record_move = assert => {$/;"	f	class:Aquatests	file:
 record_multiple_moves	tests/Aquatests.cs	/^	_ record_multiple_moves = assert => {$/;"	f	class:Aquatests	file:
