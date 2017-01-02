@@ -90,17 +90,12 @@ class AquaCmds : Form {
 		Owner = host;
 		// Commands
 		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnOpen, btnSave;
-		Action open, record, replay, stop, save, takeNote;
-
-		string script = null; //<= "Captured" by open used by replay.
-
-		open = () => {
-			script = OpenScript();
-		};
+		Action record, replay, stop, save, takeNote;
 
 		takeNote = ()=> Write("Adding notes...\n");
 
 		replay = ()=> { 
+			var script = OpenScript();
 			btnRec.Enabled = false;
 			Replay(script, Owner);
 		};
@@ -137,14 +132,14 @@ class AquaCmds : Form {
 		btnRep   = CreateBtn("Replay", replay, btnRec);
 		btnStop  = CreateBtn("Stop",   stop, btnRep);
 		btnNotes = CreateBtn("Notes",  takeNote, btnStop);
-		btnOpen  = CreateBtn("Open",   open, btnNotes);
-		btnSave  = CreateBtn("Save",   save, btnOpen);
+		// btnOpen  = CreateBtn("Open",   open, btnNotes);
+		btnSave  = CreateBtn("Save",   save, btnNotes);
 
 		Controls.Add(btnRec);
 		Controls.Add(btnRep);
 		Controls.Add(btnStop);
 		Controls.Add(btnNotes);
-		Controls.Add(btnOpen);
+		// Controls.Add(btnOpen);
 		Controls.Add(btnSave);
 
 		// Position

@@ -55,6 +55,7 @@ public class Lane {
 			mv = mv.NextMove;
 		}
 
+		// This move reflects the last change (when replaying).
 		strw.Write("move:\n");
 		return strw.ToString();
 	}
