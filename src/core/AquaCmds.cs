@@ -16,8 +16,8 @@ class AquaCmds : Form {
 		CTRLTOP = 10;
 
 	/// Attaches the aqua commands tool bar to the form under test.
-	public static void AttachTo(Form host) {
-		var cmds = new AquaCmds(host);
+	public static void AttachTo(Form host, Lane lane) {
+		var cmds = new AquaCmds(host, lane);
 		cmds.Show();
 	}
 
@@ -83,12 +83,12 @@ class AquaCmds : Form {
 		return null;
 	}
 
-	public AquaCmds(Form host) {
+	public AquaCmds(Form host, Lane lane) {
 		// Attach
 		Owner = host;
 		// Commands
 		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnOpen, btnSave;
-		Action record, replay, stop;
+		Action record, replay, stop, save;
 
 		string script = null; //<= "Captured" by open used by replay.
 
@@ -111,13 +111,31 @@ class AquaCmds : Form {
 			btnRep.Enabled = true;
 		};
 
+		save = () => {
+			// var src = lane.CreateScript();
+			var src = "Hello world";
+			using (var sfd = new SaveFileDialog()) {
+				sfd.Filter = "Quality assurance test files (*.qat)|*.qat";
+				if (sfd.ShowDialog() == DialogResult.OK) {
+					Stream strm = null;
+					if ((strm = sfd.OpenFile()) != null) {
+						using (var sw = new StreamWriter(strm)) {
+							sw.Write(src);
+							sw.Close();
+						}
+						strm.Close();
+					}
+				}
+			}
+
+		};
 
 		btnRec   = CreateBtn("Record", record, null);
 		btnRep   = CreateBtn("Replay", replay, btnRec);
 		btnStop  = CreateBtn("Stop",   stop, btnRep);
 		btnNotes = CreateBtn("Notes",  ()=> Write("Adding notes...\n"), btnStop);
 		btnOpen  = CreateBtn("Open",   open, btnNotes);
-		btnSave  = CreateBtn("Save",   ()=> Write("Saving...\n"), btnOpen);
+		btnSave  = CreateBtn("Save",   save, btnOpen);
 
 		Controls.Add(btnRec);
 		Controls.Add(btnRep);

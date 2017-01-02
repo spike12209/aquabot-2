@@ -9,11 +9,20 @@ using static ConditionalHelpers;
 
 /// This class tracks controls changes on a given form.
 public class Aquaforms {
+	/// Initializes Aquaforms. Basically, it hooks controls 
+	/// and creates the value storage database to track controls changes.
+	static ValueStore Init(Form f) {
+		ValueStore values = new ValueStore();
+		HookCtrls(f, values);
+		return values;
+	}
+
 	/// Aqua's entry point. 
 	/// This method starts looking for changes, attach commands, and so on...
 	public static void Watch(Form f) {	
 
-		AquaCmds.AttachTo(f);
+		Lane lane = new Lane();
+		AquaCmds.AttachTo(f, lane);
 
 		f.Shown += (s, e) => {
 			ValueStore values = Init(f);
@@ -27,13 +36,30 @@ public class Aquaforms {
 		};
 	}
 
-	/// Initializes Aquaforms. Basically, it hooks controls 
-	/// and creates the value storage database to track controls changes.
-	static ValueStore Init(Form f) {
-		ValueStore values = new ValueStore();
-		HookCtrls(f, values);
-		return values;
+	/// Hook handlers to track changes.
+	static void HookCtrls(Form f, Control ctrl, ValueStore values) {
+		var t = ctrl.GetType();
+		if (t != typeof(Form)) {
+			ctrl.LostFocus += (s, e) => {
+				var c = (Control) s;
+				if (HasChanged(c, values)) {
+					CaptureInput(f, c, values);
+				}
+				else {
+					CaptureOther(f, values);
+				}
+			};
+		}
+
+		foreach(Control c in ctrl.Controls) {
+			HookCtrls(f, c, values);
+		}
 	}
+
+	/// Hook handlers to track changes.
+	static void HookCtrls(Form f, ValueStore values) =>
+		HookCtrls(f, f, values);
+
 
 	/// Draws a solid line to the console.
 	static void PrintSolidLine() => 
@@ -103,7 +129,7 @@ public class Aquaforms {
 		BeginFrame(values, sender);
 
 		Unless(sender == null, () => {
-			DieUnless(UpdateValueStore(sender, values), "Fail to update values.");
+			DieUnless(UpdateValueStore(sender, values), "Fail to update vals.");
 			PrintChange(sender);
 		});
 
@@ -118,12 +144,7 @@ public class Aquaforms {
 	static void CaptureFrameOther(Form f, ValueStore values) =>
 		CaptureFrame(f, null, values);
 
-
-	/// Hook handlers to track changes.
-	static void HookCtrls(Form f, ValueStore values) =>
-		HookCtrls(f, f, values);
-
-	static void HasChangeOther(Form f, ValueStore values) {
+	static void CaptureOther(Form f, ValueStore values) {
 		foreach(Control c in f.Controls)
 			if (HasChanged(c, values))
 				CaptureFrameOther(f, values);		
@@ -132,23 +153,5 @@ public class Aquaforms {
 	static void CaptureInput(Form f, Control c, ValueStore values) =>
 		CaptureFrame(f, c, values);
 
-	/// Hook handlers to track changes.
-	static void HookCtrls(Form f, Control ctrl, ValueStore values) {
-		var t = ctrl.GetType();
-		if (t != typeof(Form)) {
-			ctrl.LostFocus += (s, e) => {
-				var c = (Control) s;
-				if (HasChanged(c, values)) {
-					CaptureInput(f, c, values);
-				}
-				else {
-					HasChangeOther(f, values);
-				}
-			};
-		}
 
-		foreach(Control c in ctrl.Controls) {
-			HookCtrls(f, c, values);
-		}
-	}
 }
