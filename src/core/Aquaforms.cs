@@ -138,8 +138,10 @@ public class Aquaforms {
 		}
 	}
 
+
 	/// Marks the begining of a frame.
 	static void BeginFrame(ValueStore values, Control input, Lane lane) {
+	//TODO: Capture side effects (asserts);
 		var frameMsg = $"| Frame No: {values.FramesCount += 1}";
 		Unless(input == null, ()=> { 
 			lane.MoveTo(input.Name);

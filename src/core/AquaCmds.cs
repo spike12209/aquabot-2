@@ -151,7 +151,6 @@ class AquaCmds : Form {
 					strm.Close();
 				}
 			}
-
 			reset();
 		};
 
