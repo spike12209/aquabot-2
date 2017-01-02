@@ -1,7 +1,0 @@
-; Basic testing script.
-focus:  prc
-change: 123
-focus:  qty
-change:   3
-focus:  tot
-assert: tot 369
