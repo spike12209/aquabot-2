@@ -15,6 +15,11 @@ class AquaCmds : Form {
 		CTRLH   = 30,
 		CTRLTOP = 10;
 
+	const string
+		RECORD    = "Record",
+		RECORDING = "Recording",
+		REPLAY    = "Replay";
+
 	/// Attaches the aqua commands tool bar to the form under test.
 	public static void AttachTo(Form host, Lane lane) {
 		var cmds = new AquaCmds(host, lane);
@@ -89,25 +94,45 @@ class AquaCmds : Form {
 		// Attach
 		Owner = host;
 		// Commands
-		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnOpen, btnSave;
-		Action record, replay, stop, save, takeNote;
+		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnSave;// btnOpen
+		Action record, replay, stop, save, takeNote, reset;
 
-		takeNote = ()=> Write("Adding notes...\n");
+		Func<bool> is_recording = () => btnRec.Text == RECORDING;
+
+		takeNote = ()=> Write("TODO: Add notes.\n");
+
+		reset = () => {
+			btnRep.Text = REPLAY;
+			btnRec.Text = RECORD;
+			btnRep.Enabled = true;
+			btnRec.Enabled = true;
+		};
 
 		replay = ()=> { 
+			if (is_recording()) {
+				MessageBox.Show("Can't replay while recording.");
+				return;
+			}
+
 			var script = OpenScript();
 			btnRec.Enabled = false;
 			Replay(script, Owner);
 		};
 
 		record = ()=> { 
-			Write("TODO: Start recording...\n");
+			// TODO: Warn the user when there is an unsaved session. i.e:
+			//       Unsaved changes 'll be lost. Wanna save before
+			//       start a new session?
+			//
+			//Each record session have to start fresh.
+			lane = new Lane();
+			// =======================================
+			btnRec.Text    = RECORDING;
 			btnRep.Enabled = false;
 		};
 
 		stop = () => {
-			btnRec.Enabled = true;
-			btnRep.Enabled = true;
+			reset();
 		};
 
 		save = () => {
@@ -126,9 +151,11 @@ class AquaCmds : Form {
 					strm.Close();
 				}
 			}
+
+			reset();
 		};
 
-		btnRec   = CreateBtn("Record", record, null);
+		btnRec   = CreateBtn(RECORDING, record, null);
 		btnRep   = CreateBtn("Replay", replay, btnRec);
 		btnStop  = CreateBtn("Stop",   stop, btnRep);
 		btnNotes = CreateBtn("Notes",  takeNote, btnStop);
