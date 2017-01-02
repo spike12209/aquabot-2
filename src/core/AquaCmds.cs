@@ -55,6 +55,15 @@ class AquaCmds : Form {
 		Location = new Point(x, y);
 	}
 
+	static void OpenScript() {
+		using (var ofd = new OpenFileDialog()) {
+			ofd.Filter = "Quality assurance test files (*.qat)|*.qat";
+			if (ofd.ShowDialog() == DialogResult.OK) {
+			}
+		
+		}
+	}
+
 	public AquaCmds(Form host) {
 		// Attach
 		Owner = host;
@@ -81,7 +90,7 @@ class AquaCmds : Form {
 		btnRep   = CreateBtn("Replay", replay, btnRec);
 		btnStop  = CreateBtn("Stop",   stop, btnRep);
 		btnNotes = CreateBtn("Notes",  ()=> Write("Adding notes...\n"), btnStop);
-		btnOpen  = CreateBtn("Open",   ()=> Write("Opening...\n"), btnNotes);
+		btnOpen  = CreateBtn("Open",   OpenScript, btnNotes);
 		btnSave  = CreateBtn("Save",   ()=> Write("Saving...\n"), btnOpen);
 
 		Controls.Add(btnRec);

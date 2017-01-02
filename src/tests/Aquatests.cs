@@ -23,6 +23,7 @@ class Aquatests {
 		var m1 = Lane.MoveTo("foo");
 		var m2 = Lane.MoveTo("bar");
 
+		assert.IsNotNull(m1);
 		assert.Equal(2,  Lane.MovesCount);
 		assert.Equal(m2, Lane.GetLastMove());
 	};
@@ -132,18 +133,19 @@ class Aquatests {
 	_ eval_script = assert => {
 		var inter = new Interpreter();
 		const string src = @"
+			; This is a comment
 			focus:  prc
 			change: 123
 			move:
-			focus:  qty
+			focus:  qty ; This is an inline comment.
 			change: 3
 			move:
 			assert: tot, 369
 			";
 
-		int countch = 0, countc = 0, counta = 0, countf = 0;
+		int countch = 0, countmv = 0, counta = 0, countf = 0;
 
-		inter.Move   = target => countc++;
+		inter.Move   = target => countmv++;
 		inter.Focus  = (target, name) => countf++;
 		inter.Change = (target, val)  => countch++;
 		inter.Assert = (target, name, val) => counta++;
@@ -152,7 +154,7 @@ class Aquatests {
 		inter.Eval(src, f);
 
 		assert.Equal(2, countf); 
-		assert.Equal(2, countc);
+		assert.Equal(2, countmv);
 		assert.Equal(2, countch);
 		assert.Equal(1, counta);
 	

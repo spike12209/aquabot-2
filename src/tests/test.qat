@@ -1,0 +1,6 @@
+focus:  prc
+change: 123
+move:           ;Focus on qty.
+focus:  qty     ;Already focused => NO OP.
+chage:    3
+assert: tot, 369

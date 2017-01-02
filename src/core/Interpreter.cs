@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 using static System.String;
@@ -9,19 +10,80 @@ using static System.Console;
 
 /// Eval replay scripts and performas actions on target forms.
 public class Interpreter {
+	const string TAB = "{TAB}";
+
+	static void Pass(Control ctrl) {
+		ctrl.BackColor = Color.Olive;
+	}
+
+	static void Fail(Control ctrl, object expected) {
+		//TODO: Tooltip or MsgBox showing the error msg;
+		// var msg = $"Expected {expected} was {ctrl.Text}.");
+		ctrl.BackColor = Color.Coral;
+	}
+
+	/// Finds a "child" control into the target's controls collection.
+	/// (Returns null if can't find the control).
+	static Control FindCtrl(Control target, string name) {
+		Control res = null;
+		foreach(Control ctrl in target.Controls) {
+			if (ctrl?.Name == name) {
+				res = ctrl;
+				break;
+			}
+			else {
+				if ((res = FindCtrl(ctrl, name)) != null)
+					break;
+			}
+		}
+		return res;
+	}
+
+	/// Finds a control into the form or it's controls collection.
+	/// (Dies if can't find the control).
+	static Control FindCtrlOrDie(Form target, string name) {
+		Control res = null;
+		foreach(Control ctrl in target.Controls) {
+			if (ctrl?.Name == name) {
+				res = ctrl;
+				break;
+			}
+			// Find res in ctrl.Controls
+			if ((res = FindCtrl(ctrl, name)) != null)
+				break;
+		}
+		DieIf(res == null, $"Failed to find {name}.");
+		return res;
+	}
 
 	/// Moves the cursor to the next control (based on tab order).
-	public Action<Form> Move = target => { /*TODO: move*/ };
+	public Action<Form> Move = target => {
+		SendKeys.Send(TAB);
+	};
 	
 	/// Moves the cursor to the specified control.
-	public Action<Form, string> Focus = (target, name) => {};
+	public Action<Form, string> Focus = (target, name) => {
+		Control ctrl = FindCtrlOrDie(target, name);
+		// Select is better than focus beacuse it works even before
+		// the form is shown. (Could be useful for unattended tests).
+		ctrl.Select();
+	};
 
 	/// Changes the value of the control that currently has focus.
-	public Action<Form, object> Change = (target, newValue) => {};
+	public Action<Form, object> Change = (target, newValue) => {
+		// TODO: Make this work for any control (cbo, nums, etc...).
+		target.ActiveControl.Text = newValue?.ToString();
+	};
 
 	/// Asserts that the value of the control matches the 
 	/// specified value.
-	public Action<Form, string, object> Assert = (target, name, value) => {};
+	public Action<Form, string, object> Assert = (target, name, value) => {
+		Control ctrl = FindCtrlOrDie(target, name);
+		if (ctrl.Text == value?.ToString())
+			Pass(ctrl);
+		else
+			Fail(ctrl, value);
+	};
 
 	/// Invoques the specified command with the given args.
 	/// It dies if the command doesn't exists.
@@ -33,6 +95,7 @@ public class Interpreter {
 		cmd = cmd.ToLower();
 		Write($"Cmd {cmd}\n");
 		switch (cmd) {
+			case ";": break ; // <= Comment.
 			case "move:": 
 				Move(target); 
 				break;
@@ -82,7 +145,7 @@ public class Interpreter {
 		DieIf(IsNullOrEmpty(script), "Script can't be null or empty.");
 
 		script = CleanScript(script);
-		var delim = new [] { '\n', ';' };
+		var delim = new [] { '\n'};
 		var iseq  = script.Split(delim, RemoveEmptyEntries);
 		for (int i = 0; i < iseq.Length; ++i) 
 			Dispatch(iseq[i], target);
