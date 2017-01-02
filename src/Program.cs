@@ -41,6 +41,8 @@ class Program {
 			int p = IsNullOrEmpty(price.Text) ? 0 : ToInt32(txtPrice.Text);
 			int q = IsNullOrEmpty(qty.Text)   ? 0 : ToInt32(qty.Text);
 			txtTot.Text = (p * q).ToString();
+			// To test errors....
+			// txtTot.Text = "123";
 		};
 
 		// Hook handlers

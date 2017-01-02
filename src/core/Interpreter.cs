@@ -18,7 +18,8 @@ public class Interpreter {
 
 	static void Fail(Control ctrl, object expected) {
 		//TODO: Tooltip or MsgBox showing the error msg;
-		// var msg = $"Expected {expected} was {ctrl.Text}.");
+		var msg = $"[ctrl.Name] - Expected {expected} was {ctrl.Text}.";
+		MessageBox.Show(msg);
 		ctrl.BackColor = Color.Coral;
 	}
 
@@ -58,11 +59,13 @@ public class Interpreter {
 
 	/// Moves the cursor to the next control (based on tab order).
 	public Action<Form> Move = target => {
+		Write($"move:   (from {target.ActiveControl.Name}).\n");
 		SendKeys.Send(TAB);
 	};
 	
 	/// Moves the cursor to the specified control.
 	public Action<Form, string> Focus = (target, name) => {
+		Write($"focus:  (on {name}).\n");
 		Control ctrl = FindCtrlOrDie(target, name);
 		// Select is better than focus beacuse it works even before
 		// the form is shown. (Could be useful for unattended tests).
@@ -71,6 +74,7 @@ public class Interpreter {
 
 	/// Changes the value of the control that currently has focus.
 	public Action<Form, object> Change = (target, newValue) => {
+		Write($"change: {target.ActiveControl.Name} to {newValue}.\n");
 		// TODO: Make this work for any control (cbo, nums, etc...).
 		target.ActiveControl.Text = newValue?.ToString();
 	};
@@ -79,23 +83,29 @@ public class Interpreter {
 	/// specified value.
 	public Action<Form, string, object> Assert = (target, name, value) => {
 		Control ctrl = FindCtrlOrDie(target, name);
-		if (ctrl.Text == value?.ToString())
-			Pass(ctrl);
-		else
-			Fail(ctrl, value);
+		
+		ctrl.TextChanged += (s,e) => {
+			Write($"assert: {name} equals {value}.\n");
+			if (ctrl.Text == value?.ToString())
+				Pass(ctrl);
+			else
+				Fail(ctrl, value);
+		};
 	};
 
 	/// Invoques the specified command with the given args.
 	/// It dies if the command doesn't exists.
 	void DispatchCmd(Form target, string cmd, params string[] args) {
 
-		DieIf(target == null, "Target form can't be null.");
+		DieIf(target == null,     "Target form can't be null.");
 		DieIf(IsNullOrEmpty(cmd), "Cmd is required.");
+		
+		if (cmd.StartsWith(";")) //<= Comment
+			return;
 
 		cmd = cmd.ToLower();
-		Write($"Cmd {cmd}\n");
+		string arglst = string.Join(" ", args);
 		switch (cmd) {
-			case ";": break ; // <= Comment.
 			case "move:": 
 				Move(target); 
 				break;
@@ -116,7 +126,6 @@ public class Interpreter {
 				Die($"Unknown cmd => {cmd}");
 				break;
 		}
-	
 	}
 
 	/// Executes a line of the script.

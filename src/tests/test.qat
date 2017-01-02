@@ -1,8 +1,7 @@
 ; Basic testing script.
 focus:  prc
 change: 123
-move:           ;Focus on qty.
-focus:  qty     ;Already focused => NO OP.
+focus:  qty
 change:   3
-move:
+focus:  tot
 assert: tot 369
