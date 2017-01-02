@@ -84,6 +84,8 @@ public class Interpreter {
 	public Action<Form, string, object> Assert = (target, name, value) => {
 		Control ctrl = FindCtrlOrDie(target, name);
 		
+		// This allows us to make sure that the assertion
+		// runs *AFTER* the control finishes updating.
 		ctrl.TextChanged += (s,e) => {
 			Write($"assert: {name} equals {value}.\n");
 			if (ctrl.Text == value?.ToString())
