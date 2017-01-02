@@ -115,8 +115,7 @@ public class Interpreter {
 				Focus(target, args[0]); 
 				break;
 			case "change:": 
-				DieIf(args.Length == 0, "[Change] Name is required.");
-				Change(target, args[0]);
+				Change(target, args.Length > 0 ? args[0] : null);
 				break;
 			case "assert:": 
 				DieIf(args.Length == 0, "[Assert] Name is required.");

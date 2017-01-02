@@ -55,6 +55,7 @@ public class Lane {
 			mv = mv.NextMove;
 		}
 
+		strw.Write("move:\n");
 		return strw.ToString();
 	}
 }

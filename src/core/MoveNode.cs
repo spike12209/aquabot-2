@@ -41,6 +41,7 @@ public class MoveNode : Node {
 	public ChangeNode RecordChange(object val) {
 		DieIf(FirstSideEffect != null, 
 				"Can't have change and side effects at the move level.");
+
 		DieIf(Change != null, 
 				"Can't update the change. (Once set, is readonly).");
 
