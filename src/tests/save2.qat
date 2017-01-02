@@ -1,0 +1,12 @@
+focus:  prc
+change: 2
+move:
+focus:  qty
+change: 3
+move:
+focus:  prc
+change: 3
+move:
+focus:  qty
+change: 4
+move:

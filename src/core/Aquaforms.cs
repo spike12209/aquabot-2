@@ -9,11 +9,67 @@ using static ConditionalHelpers;
 
 /// This class tracks controls changes on a given form.
 public class Aquaforms {
+
+	/// Inits the capture of a new frame.
+	static void CaptureFrame(Form f, Control sender, ValueStore values, Lane lane) {
+		BeginFrame(values, sender, lane);
+
+		Unless(sender == null, () => {
+			DieUnless(UpdateValueStore(sender, values), "Fail to update vals.");
+			PrintChange(sender);
+		});
+
+		// Register dependencies changes.
+		CaptureSideEffectsRec(f, values, lane);
+
+		EndFrame();
+	}
+
+	/// This happens when a value gets updated because a control 
+	/// looses its focus but that control didn't change.
+	static void CaptureFrameOther(Form f, ValueStore values, Lane lane) => 
+		CaptureFrame(f, null, values, lane);
+
+	/// Captures changes that were not produced by a user input. 
+	static void CaptureOther(Form f, ValueStore values, Lane lane) {
+		foreach(Control c in f.Controls)
+			if (HasChanged(c, values)) {
+				CaptureFrameOther(f, values, lane);
+			}
+	}
+
+	static void CaptureInput(Form f, Control c, ValueStore values, Lane lane) =>
+		CaptureFrame(f, c, values, lane);
+
+	/// Hook handlers to track changes.
+	static void HookCtrls(Form f, Control ctrl, ValueStore values, Lane lane) {
+		var t = ctrl.GetType();
+		if (t != typeof(Form)) {
+			ctrl.LostFocus += (s, e) => {
+				var c = (Control) s;
+				if (HasChanged(c, values)) {
+					CaptureInput(f, c, values, lane);
+				}
+				else {
+					CaptureOther(f, values, lane);
+				}
+			};
+		}
+
+		foreach(Control c in ctrl.Controls) {
+			HookCtrls(f, c, values, lane);
+		}
+	}
+
+	/// Hook handlers to track changes.
+	static void HookCtrls(Form f, ValueStore values, Lane lane) =>
+		HookCtrls(f, f, values, lane);
+
 	/// Initializes Aquaforms. Basically, it hooks controls 
 	/// and creates the value storage database to track controls changes.
-	static ValueStore Init(Form f) {
+	static ValueStore Init(Form f, Lane lane) {
 		ValueStore values = new ValueStore();
-		HookCtrls(f, values);
+		HookCtrls(f, values, lane);
 		return values;
 	}
 
@@ -25,7 +81,7 @@ public class Aquaforms {
 		AquaCmds.AttachTo(f, lane);
 
 		f.Shown += (s, e) => {
-			ValueStore values = Init(f);
+			ValueStore values = Init(f, lane);
 
 			PrintSolidLine(); //<= Begin spanshot.
 			WriteLine("| First Snapshot");
@@ -35,30 +91,6 @@ public class Aquaforms {
 			PrintSolidLine(); //<= End snapshot.
 		};
 	}
-
-	/// Hook handlers to track changes.
-	static void HookCtrls(Form f, Control ctrl, ValueStore values) {
-		var t = ctrl.GetType();
-		if (t != typeof(Form)) {
-			ctrl.LostFocus += (s, e) => {
-				var c = (Control) s;
-				if (HasChanged(c, values)) {
-					CaptureInput(f, c, values);
-				}
-				else {
-					CaptureOther(f, values);
-				}
-			};
-		}
-
-		foreach(Control c in ctrl.Controls) {
-			HookCtrls(f, c, values);
-		}
-	}
-
-	/// Hook handlers to track changes.
-	static void HookCtrls(Form f, ValueStore values) =>
-		HookCtrls(f, f, values);
 
 
 	/// Draws a solid line to the console.
@@ -95,22 +127,23 @@ public class Aquaforms {
 		return String.Compare(pval, c.Text) != 0;
 	}
 
-	/// Capture the changes (if any) for a given control and its child
-	/// controls.
-	static void CaptureChangesRec(Control c, ValueStore values) {
+	/// Capture SEs produced by changes on a control.
+	static void CaptureSideEffectsRec(Control c, ValueStore values, Lane lane) {
 		foreach(Control ctrl in c.Controls) {
 			if (HasChanged(ctrl, values)) {
 				DieUnless(UpdateValueStore(ctrl, values), "Fail to update values.");
 				PrintChange(ctrl);
 			}
-			CaptureChangesRec(ctrl, values);
+			CaptureSideEffectsRec(ctrl, values, lane);
 		}
 	}
 
 	/// Marks the begining of a frame.
-	static void BeginFrame(ValueStore values, Control input) {
+	static void BeginFrame(ValueStore values, Control input, Lane lane) {
 		var frameMsg = $"| Frame No: {values.FramesCount += 1}";
 		Unless(input == null, ()=> { 
+			lane.MoveTo(input.Name);
+			lane.GetLastMove().RecordChange(input.Text);
 			frameMsg += $" -- input: {input.Name}";
 		});
 
@@ -123,35 +156,6 @@ public class Aquaforms {
 		WriteLine("|");
 		PrintSolidLine();
 	}
-
-	/// Inits the capture of a new frame.
-	static void CaptureFrame(Form f, Control sender, ValueStore values) {
-		BeginFrame(values, sender);
-
-		Unless(sender == null, () => {
-			DieUnless(UpdateValueStore(sender, values), "Fail to update vals.");
-			PrintChange(sender);
-		});
-
-		// Register dependencies changes.
-		CaptureChangesRec(f, values);
-
-		EndFrame();
-	}
-
-	/// This happens when a value gets updated because a control 
-	/// looses its focus but that control didn't change.
-	static void CaptureFrameOther(Form f, ValueStore values) =>
-		CaptureFrame(f, null, values);
-
-	static void CaptureOther(Form f, ValueStore values) {
-		foreach(Control c in f.Controls)
-			if (HasChanged(c, values))
-				CaptureFrameOther(f, values);		
-	}
-
-	static void CaptureInput(Form f, Control c, ValueStore values) =>
-		CaptureFrame(f, c, values);
 
 
 }

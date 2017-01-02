@@ -1,5 +1,6 @@
 #make -s (to disable echo)
 build: ./src/**/*.cs
+	clear
 	mkdir -p ./bin
 
 	cp ./lib/atropos.dll ./bin/atropos.dll

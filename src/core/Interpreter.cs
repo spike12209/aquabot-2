@@ -106,7 +106,6 @@ public class Interpreter {
 			return;
 
 		cmd = cmd.ToLower();
-		string arglst = string.Join(" ", args);
 		switch (cmd) {
 			case "move:": 
 				Move(target); 
