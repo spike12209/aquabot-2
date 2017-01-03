@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 using static System.Console;
 using static System.Convert;
-using static Atropos;
+using static Parca;
 
 /// This is a custom toolbar we add to the form under test.
 class AquaCmds : Form {

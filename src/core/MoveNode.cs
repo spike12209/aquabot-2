@@ -1,5 +1,5 @@
 using System.IO;
-using static Atropos;
+using static Parca;
 using static System.Console;
 
 /// This nodes are used to represent a move in the "moves Lane".

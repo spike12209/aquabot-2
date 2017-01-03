@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using static System.String;
-using static Atropos;
+using static Parca;
 using static System.StringSplitOptions;
 using static System.Console;
 

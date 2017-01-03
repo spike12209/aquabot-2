@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 using static System.Console;
 using static System.Convert;
-using static Atropos;
+using static Parca;
 using static ConditionalHelpers;
 
 /// This class tracks controls changes on a given form.

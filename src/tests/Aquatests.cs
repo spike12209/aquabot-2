@@ -4,7 +4,7 @@ using System;
 using System.Windows.Forms;
 
 using static System.Console;
-using static Atropos;
+using static Parca;
 using static MoveNode;
 
 using _ = System.Action<Contest.Core.Runner>;
