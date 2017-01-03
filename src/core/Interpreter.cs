@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,9 +19,8 @@ public class Interpreter {
 	}
 
 	static void Fail(Control ctrl, object expected) {
-		//TODO: Tooltip or MsgBox showing the error msg;
+		//TODO: Tooltip showing the error when the user hovers over the control.
 		var msg = $"[ctrl.Name] - Expected {expected} was {ctrl.Text}.";
-		MessageBox.Show(msg);
 		ctrl.BackColor = Color.Coral;
 	}
 
@@ -58,9 +59,15 @@ public class Interpreter {
 	}
 
 	/// Moves the cursor to the next control (based on tab order).
-	public Action<Form> Move = target => {
+	/// Runs previous assertions (if any).
+	public Action<Form, Stack<Action>> Move = (target, asserts) => {
 		Write($"move:   (from {target.ActiveControl.Name}).\n");
 		SendKeys.Send(TAB);
+
+		Thread.Sleep(500);
+		// Are there any pending assertion?
+		while (asserts.Count > 0)
+			asserts.Pop()();
 	};
 	
 	/// Moves the cursor to the specified control.
@@ -80,18 +87,23 @@ public class Interpreter {
 	};
 
 	/// Asserts that the value of the control matches the specified value.
-	public Action<Form, string, object> Assert = (target, name, value) => {
-		Control ctrl = FindCtrlOrDie(target, name);
-		Write($"assert: {name} equals {value}.\n");
-		if (ctrl.Text == value?.ToString())
-			Pass(ctrl);
-		else
-			Fail(ctrl, value);
+	public Action<Form, string, object, Stack<Action>> Assert = 
+		(target, name, value, asserts) => {
+			// Will be called on the next move.
+			asserts.Push(()=> {
+					Control ctrl = FindCtrlOrDie(target, name);
+					Write($"assert: {name} equals {value}.\n");
+					if (ctrl.Text == value?.ToString())
+						Pass(ctrl);
+					else
+						Fail(ctrl, value);
+				});
 	};
 
 	/// Invoques the specified command with the given args.
 	/// It dies if the command doesn't exists.
-	void DispatchCmd(Form target, string cmd, params string[] args) {
+	void DispatchCmd(Form target, Stack<Action> asserts, string cmd, 
+			params string[] args) {
 
 		DieIf(target == null,     "Target form can't be null.");
 		DieIf(IsNullOrEmpty(cmd), "Cmd is required.");
@@ -102,7 +114,7 @@ public class Interpreter {
 		cmd = cmd.ToLower();
 		switch (cmd) {
 			case "move:": 
-				Move(target); 
+				Move(target, asserts); 
 				break;
 			case "focus:": 
 				DieIf(args.Length == 0, "[Focus] Name is required.");
@@ -112,9 +124,10 @@ public class Interpreter {
 				Change(target, args.Length > 0 ? args[0] : null);
 				break;
 			case "assert:": 
-				DieIf(args.Length == 0, "[Assert] Name is required.");
-				DieIf(args.Length == 1, "[Assert] Value is required.");
-				Assert(target, args[0], args[1]); 
+				DieIf(args.Length == 0, "[Assert] name is required.");
+				DieIf(args.Length == 1, "[Assert] value is required.");
+				DieIf(asserts == null,  "[Assert] asserts is required.");
+				Assert(target, args[0], args[1], asserts); 
 				break;
 			default:
 				Die($"Unknown cmd => {cmd}");
@@ -123,18 +136,18 @@ public class Interpreter {
 	}
 
 	/// Executes a line of the script.
-	void Dispatch(string line, Form target) {
+	void Dispatch(string line, Form target, Stack<Action> asserts) {
 		var delim = new [] { ' ' };
 		var words = line.Split(delim, RemoveEmptyEntries);
 		if (words.Length == 0)
 			return; //<= Empty line.
 
 		if (words.Length == 1)
-			DispatchCmd(target, words[0]);
+			DispatchCmd(target, asserts, words[0]);
 		else {
 			var args = new string[words.Length - 1];
 			Array.Copy(words, 1, args, 0, args.Length);
-			DispatchCmd(target, words[0], args);
+			DispatchCmd(target, asserts, words[0], args);
 		}
 	}
 
@@ -150,7 +163,8 @@ public class Interpreter {
 		script = CleanScript(script);
 		var delim = new [] { '\n'};
 		var iseq  = script.Split(delim, RemoveEmptyEntries);
+		var asserts = new Stack<Action>();
 		for (int i = 0; i < iseq.Length; ++i) 
-			Dispatch(iseq[i], target);
+			Dispatch(iseq[i], target, asserts);
 	}
 }

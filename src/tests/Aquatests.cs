@@ -145,10 +145,10 @@ class Aquatests {
 
 		int countch = 0, countmv = 0, counta = 0, countf = 0;
 
-		inter.Move   = target => countmv++;
+		inter.Move   = (target, asserts) => countmv++;
 		inter.Focus  = (target, name) => countf++;
 		inter.Change = (target, val)  => countch++;
-		inter.Assert = (target, name, val) => counta++;
+		inter.Assert = (target, asserts, name, val) => counta++;
 
 		var f = new Form();
 		inter.Eval(src, f);
