@@ -72,9 +72,12 @@ class AquaCmds : Form {
 		}
 	}
 
+	static string GetInitDir() => 
+		Path.GetFullPath(Directory.GetCurrentDirectory());
 
 	static string OpenScript() {
 		using (var ofd = new OpenFileDialog()) {
+			ofd.InitialDirectory = GetInitDir();
 			ofd.Filter = "Quality assurance test files (*.qat)|*.qat";
 			if (ofd.ShowDialog() == DialogResult.OK) {
 				var script = new StringBuilder();
@@ -87,6 +90,7 @@ class AquaCmds : Form {
 		}
 		return null;
 	}
+
 
 	/// host is the form under test.
 	/// lane is some sort of a timeline where changes and SE are reflected.
@@ -138,6 +142,8 @@ class AquaCmds : Form {
 		save = () => {
 			var src = lane.CreateScript();
 			using (var sfd = new SaveFileDialog()) {
+				sfd.InitialDirectory = GetInitDir();
+					
 				sfd.Filter = "Quality assurance test files (*.qat)|*.qat";
 				if (sfd.ShowDialog() != DialogResult.OK) 
 					return;

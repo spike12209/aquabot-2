@@ -9,6 +9,13 @@ using static ConditionalHelpers;
 
 /// This class tracks controls changes on a given form.
 public class Aquaforms {
+	/// Prints a control change.
+	static void PrintChange(Control ctrl, bool se = false) {
+		var name = ctrl.Name;
+		if (se)
+			name += "*";
+		WriteLine($"| Cambio ({name}) ({ctrl.GetType()}) {ctrl.Text}");
+	}
 
 	/// Inits the capture of a new frame.
 	static void CaptureFrame(Form f, Control sender, ValueStore values, Lane lane) {
@@ -17,6 +24,7 @@ public class Aquaforms {
 		Unless(sender == null, () => {
 			DieUnless(UpdateValueStore(sender, values), "Fail to update vals.");
 			PrintChange(sender);
+			lane.GetLastMove().RecordChange(sender.Text);
 		});
 
 		// Register dependencies changes.
@@ -115,9 +123,6 @@ public class Aquaforms {
 	static bool UpdateValueStore(Control ctrl, ValueStore values) => 
 		values.Update(ctrl, ctrl.Text);
 
-	/// Prints a control change.
-	static void PrintChange(Control ctrl) =>
-		WriteLine($"| Cambio ({ctrl.Name}) ({ctrl.GetType()}) {ctrl.Text}");
 
 	/// Compares the current value of a given control agaist the previous
 	/// registered value for that particular control. Returns true if the 
@@ -132,7 +137,8 @@ public class Aquaforms {
 		foreach(Control ctrl in c.Controls) {
 			if (HasChanged(ctrl, values)) {
 				DieUnless(UpdateValueStore(ctrl, values), "Fail to update values.");
-				PrintChange(ctrl);
+				PrintChange(ctrl, se: true);
+				lane.GetLastMove().Change.RecordSide(ctrl.Name, ctrl.Text);
 			}
 			CaptureSideEffectsRec(ctrl, values, lane);
 		}
@@ -145,7 +151,6 @@ public class Aquaforms {
 		var frameMsg = $"| Frame No: {values.FramesCount += 1}";
 		Unless(input == null, ()=> { 
 			lane.MoveTo(input.Name);
-			lane.GetLastMove().RecordChange(input.Text);
 			frameMsg += $" -- input: {input.Name}";
 		});
 

@@ -1,3 +1,4 @@
+*.qat
 .contest_tmp
 *.swp
 *.swo

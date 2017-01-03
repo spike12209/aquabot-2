@@ -50,7 +50,9 @@ public class Lane {
 	public string CreateScript() {
 		var mv   = FirstMove;
 		var strw = new StringWriter();
+		int fcount = 0;
 		while (mv != null) {
+			strw.Write($";Frame No: {++fcount}\n");
 			mv.CreateScript(strw);
 			mv = mv.NextMove;
 		}

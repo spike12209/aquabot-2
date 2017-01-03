@@ -90,31 +90,15 @@ public class MoveNode : Node {
 		return node;
 	}
 
-	// Este seria el formato de un script.
-	// Cuando hay un cambio.
-	// focus:  precio
-	// change: 123
-	// move:   #<= A donde va lo decide el tab order.
-	//
-	// Cuando hay side effects.
-	// move:
-	// assert: total, 333
-	//
-	// Cuando no tenemos ni cambios ni se, solo emitimos un move.
-	// move:
-	//
-
 	public void CreateScript(StringWriter buffer) {
 		if (Change != null) {
-			buffer.Write($"focus:  {InputName}\n");
-			buffer.Write($"change: {Change.Value}\n");
-			buffer.Write("move:\n");
+			Change.CreateScript(buffer);
 		}
 		else if (FirstSideEffect != null) {
 			buffer.Write("move:\n");
 			var se = FirstSideEffect;
 			while (se != null) {
-				buffer.Write($"assert: {se.InputName}, se.Value\n");
+				buffer.Write($"assert: {se.InputName} {se.Value}\n");
 				se = se.Next;
 			}
 		}

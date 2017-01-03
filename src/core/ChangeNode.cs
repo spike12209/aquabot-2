@@ -1,3 +1,5 @@
+using System.IO;
+
 using static Parca;
 
 /// This nodes are used to represent changes.
@@ -38,10 +40,6 @@ public class ChangeNode : Node {
 	}
 
 	/// Records a Side Effect **RELATIVE TO THE CHANGE**.
-	public SideEffectNode RecordSide(string inputName, object val) =>
-		RecordSide(new SideEffectNode(inputName, val));
-
-	/// Records a Side Effect **RELATIVE TO THE CHANGE**.
 	public SideEffectNode RecordSide(SideEffectNode se) {
 		DieIf(se == null, "Side effect can't be null.");
 
@@ -57,5 +55,22 @@ public class ChangeNode : Node {
 			node.Next = se;
 		}
 		return se;
+	}
+
+	/// Records a Side Effect **RELATIVE TO THE CHANGE**.
+	public SideEffectNode RecordSide(string inputName, object val) =>
+		RecordSide(new SideEffectNode(inputName, val));
+
+	public void CreateScript(StringWriter buffer) {
+		buffer.Write($"focus:  {InputName}\n");
+		buffer.Write($"change: {Value}\n");
+		buffer.Write("move:\n");
+
+		SideEffectNode se = null;
+		for (int i = 0; i < SideCount; ++i) {
+			se = SideAt(i);
+			buffer.Write($"assert: {se.InputName} {se.Value}\n");
+		}
+		buffer.Write("move:\n");
 	}
 }

@@ -38,11 +38,16 @@ class Program {
 
 		// Handlers
 		Action<Control, Control> updateTot = (price, qty) => {
-			int p = IsNullOrEmpty(price.Text) ? 0 : ToInt32(txtPrice.Text);
-			int q = IsNullOrEmpty(qty.Text)   ? 0 : ToInt32(qty.Text);
-			txtTot.Text = (p * q).ToString();
-			// To test errors....
-			// txtTot.Text = "123";
+			try {
+				int p = IsNullOrEmpty(price.Text) ? 0 : ToInt32(txtPrice.Text);
+				int q = IsNullOrEmpty(qty.Text)   ? 0 : ToInt32(qty.Text);
+				txtTot.Text = (p * q).ToString();
+				// To test errors....
+				// txtTot.Text = "123";
+			}
+			catch {
+				txtTot.Text = "#ERR";
+			}
 		};
 
 		// Hook handlers
