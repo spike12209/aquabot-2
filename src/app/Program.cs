@@ -92,11 +92,12 @@ class Program {
 		};
 	}
 
+	[STAThread]
 	static void Main(params string [] args) {
 		var f = new Form();
 		CreateCtrls(f);
 		Aquaforms.Watch(f);
-		f.ShowDialog();
+		Application.Run(f);
 	}
 
 }

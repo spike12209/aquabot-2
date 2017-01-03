@@ -10,6 +10,7 @@ using static Parca;
 
 /// This is a custom toolbar we add to the form under test.
 class AquaCmds : Form {
+
 	const int 
 		CTRLOFF = 10, //<= Space between controls.
 		CTRLH   = 30,
@@ -39,7 +40,10 @@ class AquaCmds : Form {
 		}
 
 		btn.Text = text;
-		btn.Click += (s, e) => onClick();
+		btn.Click += (s, e) => { 
+			onClick();
+		};
+
 		return btn;
 	}
 
@@ -96,7 +100,7 @@ class AquaCmds : Form {
 	/// lane is some sort of a timeline where changes and SE are reflected.
 	public AquaCmds(Form host, Lane lane) {
 		// Attach
-		Owner = host;
+		// Owner = host;
 		// Commands
 		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnSave;// btnOpen
 		Action record, replay, stop, save, takeNote, reset;
@@ -122,7 +126,7 @@ class AquaCmds : Form {
 
 			var script = OpenScript();
 			btnRec.Enabled = false;
-			Replay(script, Owner);
+			Replay(script, host);
 		};
 
 		record = ()=> { 
@@ -144,6 +148,11 @@ class AquaCmds : Form {
 
 		save = () => {
 			var src = lane.CreateScript();
+			if (this.InvokeRequired)
+				MessageBox.Show("InvokeRequired.");
+			else
+				MessageBox.Show("InvokeRequired not required.");
+
 			using (var sfd = new SaveFileDialog()) {
 				sfd.InitialDirectory = GetInitDir();
 					
