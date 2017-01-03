@@ -12,7 +12,7 @@ class Program {
 	}
 
 	static void CreateCtrls(Form f) {
-		const int LEFT = 20, LBLWIDTH = 45;
+		const int LEFT = 20, LBLWIDTH = 50;
 
 		Control last, 
 				txtPrice, txtQty, txtNet, txtTax, txtTot, 

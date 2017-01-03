@@ -99,6 +99,7 @@ class AquaCmds : Form {
 	/// host is the form under test.
 	/// lane is some sort of a timeline where changes and SE are reflected.
 	public AquaCmds(Form host, Lane lane) {
+		lane.IsRecording = true;
 		// Attach
 		// Owner = host;
 		// Commands
@@ -148,10 +149,6 @@ class AquaCmds : Form {
 
 		save = () => {
 			var src = lane.CreateScript();
-			if (this.InvokeRequired)
-				MessageBox.Show("InvokeRequired.");
-			else
-				MessageBox.Show("InvokeRequired not required.");
 
 			using (var sfd = new SaveFileDialog()) {
 				sfd.InitialDirectory = GetInitDir();
