@@ -62,15 +62,15 @@ public class ChangeNode : Node {
 		RecordSide(new SideEffectNode(inputName, val));
 
 	public void CreateScript(StringWriter buffer) {
-		buffer.Write($"focus:  {InputName}\n");
-		buffer.Write($"change: {Value}\n");
-		buffer.Write("move:\n");
+		buffer.WriteLine($"focus:  {InputName}");
+		buffer.WriteLine($"change: {Value}");
+		buffer.WriteLine("move:");
 
 		SideEffectNode se = null;
 		for (int i = 0; i < SideCount; ++i) {
 			se = SideAt(i);
-			buffer.Write($"assert: {se.InputName} {se.Value}\n");
+			buffer.WriteLine($"assert: {se.InputName} {se.Value}");
 		}
-		buffer.Write("move:\n");
+		buffer.WriteLine("move:");
 	}
 }

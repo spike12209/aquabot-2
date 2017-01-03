@@ -100,6 +100,7 @@ class AquaCmds : Form {
 	/// lane is some sort of a timeline where changes and SE are reflected.
 	public AquaCmds(Form host, Lane lane) {
 		lane.IsRecording = true;
+		Text = "Aqua";
 		// Attach
 		// Owner = host;
 		// Commands

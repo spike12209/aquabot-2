@@ -95,6 +95,8 @@ class Program {
 	[STAThread]
 	static void Main(params string [] args) {
 		var f = new Form();
+
+		f.Text = "Test Form";
 		CreateCtrls(f);
 		Aquaforms.Watch(f);
 		Application.Run(f);

@@ -53,15 +53,15 @@ public class Lane {
 		var strw = new StringWriter();
 		int fcount = 0;
 		while (mv != null) {
-			strw.Write($";-----------------------------------------------\n");
-			strw.Write($"; Frame No: {++fcount}\n");
-			strw.Write($";-----------------------------------------------\n");
+			strw.WriteLine($";---------------------------------------------");
+			strw.WriteLine($"; Frame No: {++fcount}");
+			strw.WriteLine($";---------------------------------------------");
 			mv.CreateScript(strw);
 			mv = mv.NextMove;
 		}
 
 		// This move reflects the last change (when replaying).
-		strw.Write("move:\n");
+		strw.WriteLine("move:");
 		return strw.ToString();
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using System.Drawing;
@@ -45,6 +46,7 @@ public class Interpreter {
 	/// (Dies if can't find the control).
 	static Control FindCtrlOrDie(Form target, string name) {
 		Control res = null;
+		WriteLine($"Find control on: '{target.Text}'.");
 		foreach(Control ctrl in target.Controls) {
 			if (ctrl?.Name == name) {
 				res = ctrl;
@@ -54,7 +56,7 @@ public class Interpreter {
 			if ((res = FindCtrl(ctrl, name)) != null)
 				break;
 		}
-		DieIf(res == null, $"Failed to find {name}.");
+		DieIf(res == null, $"Failed to find '{name}'.");
 		return res;
 	}
 
@@ -72,16 +74,14 @@ public class Interpreter {
 	
 	/// Moves the cursor to the specified control.
 	public Action<Form, string> Focus = (target, name) => {
-		Write($"focus:  (on {name}).\n");
+		Write($"focus: (on '{name}').\n");
 		Control ctrl = FindCtrlOrDie(target, name);
-		// Select is better than focus beacuse it works even before
-		// the form is shown. (Could be useful for unattended tests).
-		ctrl.Select();
+		ctrl.Focus();
 	};
 
 	/// Changes the value of the control that currently has focus.
 	public Action<Form, object> Change = (target, newValue) => {
-		Write($"change: {target.ActiveControl.Name} to {newValue}.\n");
+		Write($"change: '{target.ActiveControl.Name}' to {newValue}.\n");
 		// TODO: Make this work for any control (cbo, nums, etc...).
 		target.ActiveControl.Text = newValue?.ToString();
 	};
@@ -92,7 +92,7 @@ public class Interpreter {
 			// Will be called on the next move.
 			asserts.Push(()=> {
 					Control ctrl = FindCtrlOrDie(target, name);
-					Write($"assert: {name} equals {value}.\n");
+					Write($"assert: '{name}' equals {value}.\n");
 					if (ctrl.Text == value?.ToString())
 						Pass(ctrl);
 					else
@@ -161,10 +161,11 @@ public class Interpreter {
 		DieIf(IsNullOrEmpty(script), "Script can't be null or empty.");
 
 		script = CleanScript(script);
-		var delim = new [] { '\n'};
-		var iseq  = script.Split(delim, RemoveEmptyEntries);
+		var reader = new StringReader(script);
 		var asserts = new Stack<Action>();
-		for (int i = 0; i < iseq.Length; ++i) 
-			Dispatch(iseq[i], target, asserts);
+
+		string line = null;
+		while((line = reader.ReadLine()) != null)
+			Dispatch(line, target, asserts);
 	}
 }
