@@ -12,25 +12,56 @@ class Program {
 	}
 
 	static void CreateCtrls(Form f) {
-		const int LEFT = 20;
+		const int LEFT = 20, LBLWIDTH = 45;
 
-		Control last, txtPrice, txtQty, txtTot;
+		Control last, 
+				txtPrice, txtQty, txtNet, txtTax, txtTot, 
+				lblPrice, lblQty, lblNet, lblTax, lblTot;
+
+		int left = LEFT + LBLWIDTH + 5;
+
+		// Create inputs.
 		txtPrice      = new TextBox();
 		txtPrice.Name = "prc";
 		txtPrice.Top  = 20;
+		txtPrice.Left = left;
 		last          = txtPrice;
-		last.Left     = LEFT;
 
 		txtQty      = new TextBox();
 		txtQty.Name = "qty";
 		txtQty.Top  = GetTop(last);
+		txtQty.Left = left;
 		last        = txtQty;
-		last.Left   = LEFT;
 
 		txtTot      = new TextBox();
 		txtTot.Name = "tot";
 		txtTot.Top  = GetTop(last);
-		txtTot.Left = LEFT;
+		txtTot.Left = left;
+		last        = txtTot;
+
+		// Create labels.
+		lblPrice       = new Label();
+		lblPrice.Text  = "Price:";
+		lblPrice.Left  = LEFT;
+		lblPrice.Top   = txtPrice.Top;
+		lblPrice.Width = LBLWIDTH;
+
+		lblQty         = new Label();
+		lblQty.Text    = "Quantity:";
+		lblQty.Left    = LEFT;
+		lblQty.Top     = txtQty.Top;
+		lblQty.Width   = LBLWIDTH;
+
+		lblTot         = new Label();
+		lblTot.Text    = "Total:";
+		lblTot.Left    = LEFT;
+		lblTot.Top     = txtTot.Top;
+		lblTot.Width   = LBLWIDTH;
+
+		// Add controls to the form.
+		f.Controls.Add(lblPrice);
+		f.Controls.Add(lblQty);
+		f.Controls.Add(lblTot);
 
 		f.Controls.Add(txtPrice);
 		f.Controls.Add(txtQty);

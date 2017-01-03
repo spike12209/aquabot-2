@@ -79,20 +79,14 @@ public class Interpreter {
 		target.ActiveControl.Text = newValue?.ToString();
 	};
 
-	/// Asserts that the value of the control matches the 
-	/// specified value.
+	/// Asserts that the value of the control matches the specified value.
 	public Action<Form, string, object> Assert = (target, name, value) => {
 		Control ctrl = FindCtrlOrDie(target, name);
-		
-		// This allows us to make sure that the assertion
-		// runs *AFTER* the control finishes updating.
-		ctrl.TextChanged += (s,e) => {
-			Write($"assert: {name} equals {value}.\n");
-			if (ctrl.Text == value?.ToString())
-				Pass(ctrl);
-			else
-				Fail(ctrl, value);
-		};
+		Write($"assert: {name} equals {value}.\n");
+		if (ctrl.Text == value?.ToString())
+			Pass(ctrl);
+		else
+			Fail(ctrl, value);
 	};
 
 	/// Invoques the specified command with the given args.
