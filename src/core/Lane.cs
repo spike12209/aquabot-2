@@ -10,6 +10,7 @@ public class Lane {
 		NextMove;
 
 	public int MovesCount;
+	public bool IsRecording;
 
 	public MoveNode MoveTo(string inputName) {
 		var mv = new MoveNode(inputName, null);

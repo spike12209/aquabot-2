@@ -54,6 +54,9 @@ public class Aquaforms {
 		var t = ctrl.GetType();
 		if (t != typeof(Form)) {
 			ctrl.LostFocus += (s, e) => {
+				if (!lane.IsRecording)
+					return;
+
 				var c = (Control) s;
 				if (HasChanged(c, values)) {
 					CaptureInput(f, c, values, lane);

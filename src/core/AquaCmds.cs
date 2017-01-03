@@ -110,6 +110,8 @@ class AquaCmds : Form {
 			btnRec.Text = RECORD;
 			btnRep.Enabled = true;
 			btnRec.Enabled = true;
+
+			lane.IsRecording = false;
 		};
 
 		replay = ()=> { 
@@ -130,6 +132,7 @@ class AquaCmds : Form {
 			//
 			//Each record session have to start fresh.
 			lane = new Lane();
+			lane.IsRecording = true;
 			// =======================================
 			btnRec.Text    = RECORDING;
 			btnRep.Enabled = false;
