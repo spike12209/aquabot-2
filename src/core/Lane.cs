@@ -1,4 +1,5 @@
 using System.IO;
+using System.Collections.Generic;
 using static Parca;
 using static System.Console;
 
@@ -11,6 +12,10 @@ public class Lane {
 
 	public int MovesCount;
 	public bool IsRecording;
+
+	/// Form's state before the action begins.
+	public readonly Dictionary<string, string> StartingState = 
+		new Dictionary<string, string> ();
 
 	public MoveNode MoveTo(string inputName) {
 		var mv = new MoveNode(inputName, null);
@@ -49,9 +54,18 @@ public class Lane {
 		MoveAt(MovesCount - 1);
 
 	public string CreateScript() {
-		var mv   = FirstMove;
-		var strw = new StringWriter();
+		var mv     = FirstMove;
+		var strw   = new StringWriter();
 		int fcount = 0;
+
+		// This part of the script ensures that the initial
+		// state of the form under tests matches the initial state
+		// of the same form when we were recording the script.
+		foreach(var k in StartingState.Keys)
+			strw.WriteLine($"ensure: {k} {StartingState[k]}");
+
+		strw.WriteLine("start:");
+
 		while (mv != null) {
 			strw.WriteLine($";---------------------------------------------");
 			strw.WriteLine($"; Frame No: {++fcount}");
@@ -61,7 +75,7 @@ public class Lane {
 		}
 
 		// This move reflects the last change (when replaying).
-		strw.WriteLine("move:");
+		strw.WriteLine("end:");
 		return strw.ToString();
 	}
 }

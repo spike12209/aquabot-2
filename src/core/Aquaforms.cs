@@ -97,7 +97,7 @@ public class Aquaforms {
 			PrintSolidLine(); //<= Begin spanshot.
 			WriteLine("| First Snapshot");
 			PrintSolidLine();
-			FirstSnapshot(f, values);
+			FirstSnapshot(f, values, lane);
 			WriteLine("|");
 			PrintSolidLine(); //<= End snapshot.
 		};
@@ -109,16 +109,17 @@ public class Aquaforms {
 		WriteLine("+".PadRight(60, '-'));
 
 	/// Takes the first snapshot, which is a picture of the whole form.
-	static void FirstSnapshot(Control ctrl, ValueStore values) {
+	static void FirstSnapshot(Control ctrl, ValueStore values, Lane lane) {
 
 		var t = ctrl.GetType();
 		if (t != typeof(Form)) {
 			WriteLine($"| ({ctrl.Name})"  + $" ({t}) "  + ctrl.Text);
 			values.Set(ctrl, ctrl.Text);
+			lane.StartingState.Add(ctrl.Name, ctrl.Text);
 		}
 
 		foreach(Control c in ctrl.Controls)
-			FirstSnapshot(c, values);
+			FirstSnapshot(c, values, lane);
 
 	}
 

@@ -9,11 +9,14 @@ using static System.String;
 using static Parca;
 using static System.StringSplitOptions;
 using static System.Console;
+using static System.Windows.Forms.MessageBoxButtons;
 
 
 /// Eval replay scripts and performas actions on target forms.
 public class Interpreter {
-	const string TAB = "{TAB}";
+	const string 
+		APPNAME = "AquaForms",
+		TAB = "{TAB}";
 
 	static void Pass(Control ctrl) {
 		ctrl.BackColor = Color.Olive;
@@ -22,6 +25,7 @@ public class Interpreter {
 	static void Fail(Control ctrl, object expected) {
 		//TODO: Tooltip showing the error when the user hovers over the control.
 		var msg = $"[ctrl.Name] - Expected {expected} was {ctrl.Text}.";
+		WriteLine(msg);
 		ctrl.BackColor = Color.Coral;
 	}
 
@@ -46,7 +50,6 @@ public class Interpreter {
 	/// (Dies if can't find the control).
 	static Control FindCtrlOrDie(Form target, string name) {
 		Control res = null;
-		WriteLine($"Find control on: '{target.Text}'.");
 		foreach(Control ctrl in target.Controls) {
 			if (ctrl?.Name == name) {
 				res = ctrl;
@@ -63,7 +66,7 @@ public class Interpreter {
 	/// Moves the cursor to the next control (based on tab order).
 	/// Runs previous assertions (if any).
 	public Action<Form, Stack<Action>> Move = (target, asserts) => {
-		Write($"move:   (from {target.ActiveControl.Name}).\n");
+		Write($"move: (from {target.ActiveControl.Name}).\n");
 		SendKeys.Send(TAB);
 
 		Thread.Sleep(500);
@@ -86,26 +89,59 @@ public class Interpreter {
 		target.ActiveControl.Text = newValue?.ToString();
 	};
 
+	public bool Confirm(string msg) {
+		return MessageBox.Show(msg, APPNAME, YesNo) == DialogResult.Yes;
+	}
+
+	public bool AutoFix(string inputName) {
+		return Confirm($"Autofix {inputName}?");
+	}
+
+	public Action End = () => { };
+
+	static void Fix(Form f, string name, string text) =>
+		FindCtrlOrDie(f, name).Text = text;
+
+	public void Start (Form f, PreCondErrors errors) {
+		if (errors.Count  == 0)
+			return;
+
+		for (int i = 0; i < errors.Count; ++i) {
+			var err = errors.At(i);
+			MessageBox.Show(err.ToString());
+			if (AutoFix(err.InputName))
+				Fix(f, err.InputName, err.Expected?.ToString());
+		}
+	}
+
+	public Action<Form, string, object, PreCondErrors> Ensure = 
+		(f, name, value, errors) => {
+			Control ctrl = FindCtrlOrDie(f, name);
+			Write($"ensure: '{name}' equals {value}.\n");
+			if (ctrl.Text != value?.ToString())
+				errors.Add(name, value, ctrl.Text);
+	};
+
 	/// Asserts that the value of the control matches the specified value.
 	public Action<Form, string, object, Stack<Action>> Assert = 
 		(target, name, value, asserts) => {
 			// Will be called on the next move.
 			asserts.Push(()=> {
-					Control ctrl = FindCtrlOrDie(target, name);
-					Write($"assert: '{name}' equals {value}.\n");
-					if (ctrl.Text == value?.ToString())
-						Pass(ctrl);
-					else
-						Fail(ctrl, value);
-				});
+				Control ctrl = FindCtrlOrDie(target, name);
+				Write($"assert: '{name}' equals {value}.\n");
+				if (ctrl.Text == value?.ToString())
+					Pass(ctrl);
+				else
+					Fail(ctrl, value);
+			});
 	};
 
 	/// Invoques the specified command with the given args.
-	/// It dies if the command doesn't exists.
-	void DispatchCmd(Form target, Stack<Action> asserts, string cmd, 
-			params string[] args) {
+	/// (It dies if the command doesn't exists).
+	void DispatchCmd(Form f, Stack<Action> asserts, PreCondErrors errors,
+		   	string cmd, params string[] args) {
 
-		DieIf(target == null,     "Target form can't be null.");
+		DieIf(f == null, "Target form can't be null.");
 		DieIf(IsNullOrEmpty(cmd), "Cmd is required.");
 		
 		if (cmd.StartsWith(";")) //<= Comment
@@ -113,21 +149,32 @@ public class Interpreter {
 
 		cmd = cmd.ToLower();
 		switch (cmd) {
-			case "move:": 
-				Move(target, asserts); 
+			case "move:":
+				Move(f, asserts); 
 				break;
 			case "focus:": 
 				DieIf(args.Length == 0, "[Focus] Name is required.");
-				Focus(target, args[0]); 
+				Focus(f, args[0]); 
 				break;
 			case "change:": 
-				Change(target, args.Length > 0 ? args[0] : null);
+				Change(f, args.Length > 0 ? args[0] : null);
+				break;
+			case "end:": 
+				End();
+				break;
+			case "start:": 
+				Start(f, errors);
+				break;
+			case "ensure:": 
+				DieIf(args.Length == 0, "[Ensure] name is required.");
+				DieIf(args.Length == 1, "[Ensure] value is required.");
+				Ensure(f, args[0], args[1], errors); 
 				break;
 			case "assert:": 
 				DieIf(args.Length == 0, "[Assert] name is required.");
 				DieIf(args.Length == 1, "[Assert] value is required.");
 				DieIf(asserts == null,  "[Assert] asserts is required.");
-				Assert(target, args[0], args[1], asserts); 
+				Assert(f, args[0], args[1], asserts); 
 				break;
 			default:
 				Die($"Unknown cmd => {cmd}");
@@ -136,18 +183,20 @@ public class Interpreter {
 	}
 
 	/// Executes a line of the script.
-	void Dispatch(string line, Form target, Stack<Action> asserts) {
+	void Dispatch(string line, Form target, Stack<Action> asserts, 
+			PreCondErrors errors) {
+
 		var delim = new [] { ' ' };
 		var words = line.Split(delim, RemoveEmptyEntries);
 		if (words.Length == 0)
 			return; //<= Empty line.
 
 		if (words.Length == 1)
-			DispatchCmd(target, asserts, words[0]);
+			DispatchCmd(target, asserts, errors, words[0]);
 		else {
 			var args = new string[words.Length - 1];
 			Array.Copy(words, 1, args, 0, args.Length);
-			DispatchCmd(target, asserts, words[0], args);
+			DispatchCmd(target, asserts, errors, words[0], args);
 		}
 	}
 
@@ -161,11 +210,12 @@ public class Interpreter {
 		DieIf(IsNullOrEmpty(script), "Script can't be null or empty.");
 
 		script = CleanScript(script);
-		var reader = new StringReader(script);
+		var reader  = new StringReader(script);
 		var asserts = new Stack<Action>();
-
+		var errors  = new PreCondErrors();
 		string line = null;
+
 		while((line = reader.ReadLine()) != null)
-			Dispatch(line, target, asserts);
+			Dispatch(line, target, asserts, errors);
 	}
 }
