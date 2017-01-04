@@ -16,7 +16,10 @@ public class Aquaforms {
 		if (t != typeof(Form)) {
 			WriteLine($"| ({ctrl.Name})"  + $" ({t}) "  + ctrl.Text);
 			values.Set(ctrl, ctrl.Text);
-			lane.StartingState[ctrl.Name] = ctrl.Text;
+
+			// As of now, we don't care abaut labels.
+			if (t != typeof(Label))
+				lane.StartingState[ctrl.Name] = ctrl.Text;
 		}
 
 		foreach(Control c in ctrl.Controls)
