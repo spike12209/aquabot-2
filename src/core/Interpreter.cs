@@ -102,16 +102,23 @@ public class Interpreter {
 	static void Fix(Form f, string name, string text) =>
 		FindCtrlOrDie(f, name).Text = text;
 
-	public void Start (Form f, PreCondErrors errors) {
+	public bool Start (Form f, PreCondErrors errors) {
 		if (errors.Count  == 0)
-			return;
+			return true;
 
+		int fixes = 0;
 		for (int i = 0; i < errors.Count; ++i) {
 			var err = errors.At(i);
 			MessageBox.Show(err.ToString());
 			if (AutoFix(err.InputName))
 				Fix(f, err.InputName, err.Expected?.ToString());
 		}
+
+		if (fixes == errors.Count) {
+			errors.Clear();
+			Start(f, errors);
+		}
+		return false;
 	}
 
 	public Action<Form, string, object, PreCondErrors> Ensure = 
@@ -138,14 +145,15 @@ public class Interpreter {
 
 	/// Invoques the specified command with the given args.
 	/// (It dies if the command doesn't exists).
-	void DispatchCmd(Form f, Stack<Action> asserts, PreCondErrors errors,
+	/// Returns true if the command success, false otherwise.
+	bool DispatchCmd(Form f, Stack<Action> asserts, PreCondErrors errors,
 		   	string cmd, params string[] args) {
 
 		DieIf(f == null, "Target form can't be null.");
 		DieIf(IsNullOrEmpty(cmd), "Cmd is required.");
 		
 		if (cmd.StartsWith(";")) //<= Comment
-			return;
+			return true;
 
 		cmd = cmd.ToLower();
 		switch (cmd) {
@@ -163,7 +171,8 @@ public class Interpreter {
 				End();
 				break;
 			case "start:": 
-				Start(f, errors);
+				if (!Start(f, errors)) // Can't start due to preconds errors.
+					return false;
 				break;
 			case "ensure:": 
 				DieIf(args.Length == 0, "[Ensure] name is required.");
@@ -180,23 +189,24 @@ public class Interpreter {
 				Die($"Unknown cmd => {cmd}");
 				break;
 		}
+		return true;
 	}
 
 	/// Executes a line of the script.
-	void Dispatch(string line, Form target, Stack<Action> asserts, 
+	bool Dispatch(string line, Form target, Stack<Action> asserts, 
 			PreCondErrors errors) {
 
 		var delim = new [] { ' ' };
 		var words = line.Split(delim, RemoveEmptyEntries);
 		if (words.Length == 0)
-			return; //<= Empty line.
+			return true; //<= Empty line.
 
 		if (words.Length == 1)
-			DispatchCmd(target, asserts, errors, words[0]);
+			return DispatchCmd(target, asserts, errors, words[0]);
 		else {
 			var args = new string[words.Length - 1];
 			Array.Copy(words, 1, args, 0, args.Length);
-			DispatchCmd(target, asserts, errors, words[0], args);
+			return DispatchCmd(target, asserts, errors, words[0], args);
 		}
 	}
 
@@ -216,6 +226,7 @@ public class Interpreter {
 		string line = null;
 
 		while((line = reader.ReadLine()) != null)
-			Dispatch(line, target, asserts, errors);
+			if (!Dispatch(line, target, asserts, errors))
+				break;
 	}
 }

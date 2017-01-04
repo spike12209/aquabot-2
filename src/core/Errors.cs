@@ -69,7 +69,7 @@ public class PreCondErrors {
 		return tail.Err;
 	}
 
-	public void Destroy() {
+	public void Clear() {
 		// TODO: Dispose each itemb before 'nulling' Head.
 		Head = null;
 	}

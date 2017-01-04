@@ -61,8 +61,13 @@ public class Lane {
 		// This part of the script ensures that the initial
 		// state of the form under tests matches the initial state
 		// of the same form when we were recording the script.
+		strw.WriteLine($";---------------------------------------------");
+		strw.WriteLine($"; Check preconditions");
+		strw.WriteLine($";---------------------------------------------");
 		foreach(var k in StartingState.Keys)
 			strw.WriteLine($"ensure: {k} {StartingState[k]}");
+
+		strw.WriteLine($";---------------------------------------------");
 
 		strw.WriteLine("start:");
 
