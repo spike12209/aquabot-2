@@ -99,7 +99,6 @@ class AquaCmds : Form {
 	/// host is the form under test.
 	/// lane is some sort of a timeline where changes and SE are reflected.
 	public AquaCmds(Form host, Lane lane) {
-		lane.IsRecording = true;
 		Text = "Aqua";
 		// Attach
 		// Owner = host;
@@ -107,13 +106,11 @@ class AquaCmds : Form {
 		Button btnRec = null, btnRep = null, btnStop, btnNotes, btnSave;// btnOpen
 		Action record, replay, stop, save, takeNote, reset;
 
-		Func<bool> is_recording = () => btnRec.Text == RECORDING;
-
 		takeNote = ()=> Write("TODO: Add notes.\n");
 
 		reset = () => {
-			btnRep.Text = REPLAY;
-			btnRec.Text = RECORD;
+			btnRep.Text    = REPLAY;
+			btnRec.Text    = RECORD;
 			btnRep.Enabled = true;
 			btnRec.Enabled = true;
 
@@ -121,7 +118,7 @@ class AquaCmds : Form {
 		};
 
 		replay = ()=> { 
-			if (is_recording()) {
+			if (lane.IsRecording) {
 				MessageBox.Show("Can't replay while recording.");
 				return;
 			}
@@ -134,10 +131,10 @@ class AquaCmds : Form {
 		record = ()=> { 
 			// TODO: Warn the user when there is an unsaved session. i.e:
 			//       Unsaved changes 'll be lost. Wanna save before
-			//       start a new session?
+			//       start a new session? (or something like that).
 			//
 			//Each record session have to start fresh.
-			lane = new Lane();
+			// lane.Clear();
 			lane.IsRecording = true;
 			// =======================================
 			btnRec.Text    = RECORDING;
@@ -149,6 +146,11 @@ class AquaCmds : Form {
 		};
 
 		save = () => {
+			if (lane.MovesCount == 0) {
+				MessageBox.Show("No moves.");
+				return;
+			}
+
 			var src = lane.CreateScript();
 
 			using (var sfd = new SaveFileDialog()) {
@@ -170,7 +172,7 @@ class AquaCmds : Form {
 			reset();
 		};
 
-		btnRec   = CreateBtn(RECORDING, record, null);
+		btnRec   = CreateBtn(RECORD, record, null);
 		btnRep   = CreateBtn("Replay", replay, btnRec);
 		btnStop  = CreateBtn("Stop",   stop, btnRep);
 		btnNotes = CreateBtn("Notes",  takeNote, btnStop);

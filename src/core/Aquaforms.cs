@@ -9,6 +9,24 @@ using static ConditionalHelpers;
 
 /// This class tracks controls changes on a given form.
 public class Aquaforms {
+
+	/// Takes the first snapshot, which is a picture of the whole form.
+	static void FirstSnapshot(Control ctrl, ValueStore values, Lane lane) {
+		var t = ctrl.GetType();
+		if (t != typeof(Form)) {
+			WriteLine($"| ({ctrl.Name})"  + $" ({t}) "  + ctrl.Text);
+			values.Set(ctrl, ctrl.Text);
+			lane.StartingState[ctrl.Name] = ctrl.Text;
+		}
+
+		foreach(Control c in ctrl.Controls)
+			FirstSnapshot(c, values, lane);
+	}
+
+	/// Draws a solid line to the console.
+	static void PrintSolidLine() => 
+		WriteLine("+".PadRight(60, '-'));
+
 	/// Prints a control change.
 	static void PrintChange(Control ctrl, bool se = false) {
 		var name = ctrl.Name;
@@ -103,25 +121,6 @@ public class Aquaforms {
 		};
 	}
 
-
-	/// Draws a solid line to the console.
-	static void PrintSolidLine() => 
-		WriteLine("+".PadRight(60, '-'));
-
-	/// Takes the first snapshot, which is a picture of the whole form.
-	static void FirstSnapshot(Control ctrl, ValueStore values, Lane lane) {
-
-		var t = ctrl.GetType();
-		if (t != typeof(Form)) {
-			WriteLine($"| ({ctrl.Name})"  + $" ({t}) "  + ctrl.Text);
-			values.Set(ctrl, ctrl.Text);
-			lane.StartingState.Add(ctrl.Name, ctrl.Text);
-		}
-
-		foreach(Control c in ctrl.Controls)
-			FirstSnapshot(c, values, lane);
-
-	}
 
 	/// Update control changes to the value store.
 	static bool UpdateValueStore(Control ctrl, ValueStore values) => 

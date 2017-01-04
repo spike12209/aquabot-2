@@ -53,6 +53,14 @@ public class Lane {
 	public MoveNode GetLastMove() =>
 		MoveAt(MovesCount - 1);
 
+	public void Clear() {
+		// TODO: Dispose Moves
+		FirstMove  = null;
+		NextMove   = null;
+		MovesCount = 0;
+		StartingState.Clear();
+	}
+
 	public string CreateScript() {
 		var mv     = FirstMove;
 		var strw   = new StringWriter();
