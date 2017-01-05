@@ -4,7 +4,7 @@ using static Parca;
 using static System.Console;
 
 /// Represents a set of moves between inputs on a form.
-/// (Those moves are also used to represent changes ans side effects).
+/// (Those moves are also used to represent changes and side effects).
 public class Lane {
 	public MoveNode 
 		FirstMove,

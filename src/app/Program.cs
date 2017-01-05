@@ -107,7 +107,7 @@ class Program {
 				txtTax.Text = tax.ToString();
 				txtTot.Text = (net + tax).ToString();
 				// To test errors....
-				txtTot.Text = "123";
+				// txtTot.Text = "123";
 			}
 			catch {
 				txtTot.Text = "#ERR";

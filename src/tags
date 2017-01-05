@@ -7,13 +7,13 @@
 APPNAME	.\core\Interpreter.cs	/^		APPNAME = "AquaForms",$/;"	f	class:Interpreter	file:
 Actual	.\core\Errors.cs	/^	public readonly object Expected, Actual;$/;"	f	class:PreCondError
 Add	.\core\Errors.cs	/^	public void Add(string name, object expected, object actual) {$/;"	m	class:PreCondErrors
-AquaCmds	.\core\AquaCmds.cs	/^	public AquaCmds(Form host, Lane lane) {$/;"	m	class:AquaCmds
+AquaCmds	.\core\AquaCmds.cs	/^	public AquaCmds(Form host, Lane lane, bool quiet) {$/;"	m	class:AquaCmds
 AquaCmds	.\core\AquaCmds.cs	/^class AquaCmds : Form {$/;"	c
 Aquaforms	.\core\Aquaforms.cs	/^public class Aquaforms {$/;"	c
 Aquatests	.\tests\Aquatests.cs	/^class Aquatests {$/;"	c
 Assert	.\core\Interpreter.cs	/^	public Action<Form, string, object, Stack<Action>> Assert = $/;"	f	class:Interpreter
 At	.\core\Errors.cs	/^	public PreCondError At(int idx) {$/;"	m	class:PreCondErrors
-AttachTo	.\core\AquaCmds.cs	/^	public static void AttachTo(Form host, Lane lane) {$/;"	m	class:AquaCmds
+AttachTo	.\core\AquaCmds.cs	/^	public static void AttachTo(Form host, Lane lane, bool quiet) {$/;"	m	class:AquaCmds
 AutoFix	.\core\Interpreter.cs	/^	bool AutoFix(PreCondError err) {$/;"	m	class:Interpreter	file:
 BeginFrame	.\core\Aquaforms.cs	/^	static void BeginFrame(ValueStore values, Control input, Lane lane) {$/;"	m	class:Aquaforms	file:
 CTRLH	.\core\AquaCmds.cs	/^		CTRLH   = 30,$/;"	f	class:AquaCmds	file:
@@ -46,9 +46,9 @@ End	.\core\Interpreter.cs	/^	public Action End = () => { };$/;"	f	class:Interpre
 EndFrame	.\core\Aquaforms.cs	/^	static void EndFrame() {$/;"	m	class:Aquaforms	file:
 Ensure	.\core\Interpreter.cs	/^	public Action<Form, string, object, PreCondErrors> Ensure = $/;"	f	class:Interpreter
 Err	.\core\Errors.cs	/^		public readonly PreCondError Err;$/;"	f	class:PreCondErrors.PreCondNode
-Eval	.\core\Interpreter.cs	/^	public void Eval(string script, Form target) {$/;"	m	class:Interpreter
+Eval	.\core\Interpreter.cs	/^	public void Eval(string script, Form target, bool quiet) {$/;"	m	class:Interpreter
 Expected	.\core\Errors.cs	/^	public readonly object Expected, Actual;$/;"	f	class:PreCondError
-Fail	.\core\Interpreter.cs	/^	static void Fail(Control ctrl, object expected) {$/;"	m	class:Interpreter	file:
+Fail	.\core\Interpreter.cs	/^	static void Fail(Control c, object expected) {$/;"	m	class:Interpreter	file:
 FindCtrl	.\core\Interpreter.cs	/^	static Control FindCtrl(Control target, string name) {$/;"	m	class:Interpreter	file:
 FindCtrlOrDie	.\core\Interpreter.cs	/^	static Control FindCtrlOrDie(Form target, string name) {$/;"	m	class:Interpreter	file:
 FirstMove	.\core\Lane.cs	/^		FirstMove,$/;"	f	class:Lane
@@ -110,7 +110,7 @@ RecordSide	.\core\ChangeNode.cs	/^	public SideEffectNode RecordSide(SideEffectNo
 RecordSide	.\core\ChangeNode.cs	/^	public SideEffectNode RecordSide(string inputName, object val) =>$/;"	m	class:ChangeNode
 RecordSide	.\core\MoveNode.cs	/^	public SideEffectNode RecordSide(SideEffectNode se) {$/;"	m	class:MoveNode
 RecordSide	.\core\MoveNode.cs	/^	public SideEffectNode RecordSide(string inputName, object val) =>$/;"	m	class:MoveNode
-Replay	.\core\AquaCmds.cs	/^	static void Replay (string script, Form host) {$/;"	m	class:AquaCmds	file:
+Replay	.\core\AquaCmds.cs	/^	static void Replay (string script, Form host, bool quiet) {$/;"	m	class:AquaCmds	file:
 Set	.\core\ValueStore.cs	/^	public void Set(Control ctrl, object val) {$/;"	m	class:ValueStore
 SetPositionOnScreen	.\core\AquaCmds.cs	/^	void SetPositionOnScreen(Form host) {$/;"	m	class:AquaCmds	file:
 SideAt	.\core\ChangeNode.cs	/^	public SideEffectNode SideAt(int idx) {$/;"	m	class:ChangeNode
@@ -119,7 +119,7 @@ SideCount	.\core\ChangeNode.cs	/^	public int SideCount;$/;"	f	class:ChangeNode
 SideCount	.\core\MoveNode.cs	/^	public int SideCount;$/;"	f	class:MoveNode
 SideEffectNode	.\core\SideEffectNode.cs	/^	public SideEffectNode(string inputName = null, object val = null) $/;"	m	class:SideEffectNode
 SideEffectNode	.\core\SideEffectNode.cs	/^public class SideEffectNode : Node {$/;"	c
-Start	.\core\Interpreter.cs	/^	public bool Start (Form f, PreCondErrors errors) {$/;"	m	class:Interpreter
+Start	.\core\Interpreter.cs	/^	public bool Start (Form f, PreCondErrors errors, bool quiet) {$/;"	m	class:Interpreter
 StartingState	.\core\Lane.cs	/^	public readonly Dictionary<string, string> StartingState = $/;"	f	class:Lane
 SumCtrlsWidth	.\core\AquaCmds.cs	/^	static int SumCtrlsWidth(Form f, int offset) {$/;"	m	class:AquaCmds	file:
 TAB	.\core\Interpreter.cs	/^		TAB = "{TAB}";$/;"	f	class:Interpreter	file:
@@ -133,7 +133,7 @@ Value	.\core\Node.cs	/^	public object Value;$/;"	f	class:Node
 Value	.\core\Value.cs	/^	public Value(Value next, Control ctrl, string val) {$/;"	m	class:Value
 Value	.\core\Value.cs	/^class Value {$/;"	c
 ValueStore	.\core\ValueStore.cs	/^class ValueStore {$/;"	c
-Watch	.\core\Aquaforms.cs	/^	public static void Watch(Form f) {	$/;"	m	class:Aquaforms
+Watch	.\core\Aquaforms.cs	/^	public static void Watch(Form f, bool quiet) {	$/;"	m	class:Aquaforms
 _head	.\core\ValueStore.cs	/^	Value _head;$/;"	f	class:ValueStore	file:
 before_each	.\tests\Aquatests.cs	/^	_ before_each = test =>$/;"	f	class:Aquatests	file:
 create_replay_script	.\tests\Aquatests.cs	/^	_ create_replay_script = assert => {$/;"	f	class:Aquatests	file:
