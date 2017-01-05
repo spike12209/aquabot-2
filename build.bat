@@ -1,7 +1,7 @@
 cls
-mkdir ./bin
+mkdir .\bin
 
-copy ./lib/parca.dll ./bin/parca.dll
+copy .\lib\parca.dll .\bin\parca.dll
 
 csc ./src/core/*.cs /target:library /out:./bin/aquaforms.dll ^
 	/r:System.Drawing.dll ^

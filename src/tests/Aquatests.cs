@@ -161,5 +161,13 @@ class Aquatests {
 	};
 
 
+	_ get_precond_errors = assert => {
+		var errs = new PreCondErrors();
+		errs.Add("foo", "bar", "baz");
+		errs.Add("foo1", "bar1", "baz1");
+		
+		assert.IsNotNull(errs.At(1));
+	};
+
 
 }

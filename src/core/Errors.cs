@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using static Parca;
 using static System.String;
+using static System.Console;
 
 /// Represents a pre-condition error.
 public class PreCondError {
@@ -16,7 +17,8 @@ public class PreCondError {
 	}
 
 	public override string ToString() =>
-		$"[{InputName}] expected '{Expected}' was '{Actual}'";
+		$"Fail precondition for [{InputName}].\n" +
+	   	$"Expected '{Expected}' was '{Actual}'.";
 } 
 
 /// Precondition errors.
@@ -37,36 +39,39 @@ public class PreCondErrors {
 		DieIf(IsNullOrEmpty(name), "[Add] name is required.");
 
 		var pce = new PreCondError(name, expected, actual);
-		if (Head == null)
+		if (Head == null) {
 			Head = new PreCondNode(pce);
+			WriteLine($"Set head {Count}");
+		}
 		else {
-			var tail = Head.Next;
-			while(tail != null)
+			var tail = Head;
+			while(tail.Next != null)
 				tail = tail.Next;
 
-			tail = new PreCondNode(pce);
+			tail.Next = new PreCondNode(pce);
+			WriteLine($"Set next {Count}");
 		}
 		Count++;
 	}
 
 	public PreCondError At(int idx) {
 		DieIf(idx >= Count, $"idx must less than {Count}.");
+		DieIf(Head == null, "There are no errors.");
 
-		if (Head == null)
-			Die("There are no errors.");
-
+		var node = Head;
 		if (idx == 0)
-			return Head.Err;
+			return node.Err;
 
-		var tail = Head.Next;
-		for (int i = 0; tail != null; ++i) {
+		int i = 0;
+		while (node.Next != null) {
+			node = node.Next;
+			i++;
 			if (i == idx)
 				break;
-			tail = tail.Next;
 		}
 
-		DieIf(tail == null, $"Internal error. Fail to get item at idx {idx}.");
-		return tail.Err;
+		DieIf(node == null, $"Internal error. Fail to get item at idx {idx}.");
+		return node.Err;
 	}
 
 	public void Clear() {

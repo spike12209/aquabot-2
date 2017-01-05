@@ -24,7 +24,7 @@ public class Interpreter {
 
 	static void Fail(Control ctrl, object expected) {
 		//TODO: Tooltip showing the error when the user hovers over the control.
-		var msg = $"[ctrl.Name] - Expected {expected} was {ctrl.Text}.";
+		var msg = $"[{ctrl.Name}] - Expected [{expected}] was [{ctrl.Text}].";
 		WriteLine(msg);
 		ctrl.BackColor = Color.Coral;
 	}
@@ -59,14 +59,14 @@ public class Interpreter {
 			if ((res = FindCtrl(ctrl, name)) != null)
 				break;
 		}
-		DieIf(res == null, $"Failed to find '{name}'.");
+		DieIf(res == null, $"Failed to find [{name}]");
 		return res;
 	}
 
 	/// Moves the cursor to the next control (based on tab order).
 	/// Runs previous assertions (if any).
 	public Action<Form, Stack<Action>> Move = (target, asserts) => {
-		Write($"move: (from {target.ActiveControl.Name}).\n");
+		Write($"move: (from [{target.ActiveControl.Name}])\n");
 		SendKeys.Send(TAB);
 
 		Thread.Sleep(500);
@@ -77,14 +77,14 @@ public class Interpreter {
 	
 	/// Moves the cursor to the specified control.
 	public Action<Form, string> Focus = (target, name) => {
-		Write($"focus: (on '{name}').\n");
+		Write($"focus: [{name}]\n");
 		Control ctrl = FindCtrlOrDie(target, name);
 		ctrl.Focus();
 	};
 
 	/// Changes the value of the control that currently has focus.
 	public Action<Form, object> Change = (target, newValue) => {
-		Write($"change: '{target.ActiveControl.Name}' to {newValue}.\n");
+		Write($"change: [{target.ActiveControl.Name}] to [{newValue}]\n");
 		// TODO: Make this work for any control (cbo, nums, etc...).
 		target.ActiveControl.Text = newValue?.ToString();
 	};
@@ -94,7 +94,7 @@ public class Interpreter {
 	}
 
 	public bool AutoFix(string inputName) {
-		return Confirm($"Autofix {inputName}?");
+		return Confirm($"Autofix [{inputName}]?");
 	}
 
 	public Action End = () => { };
@@ -124,7 +124,7 @@ public class Interpreter {
 	public Action<Form, string, object, PreCondErrors> Ensure = 
 		(f, name, value, errors) => {
 			Control ctrl = FindCtrlOrDie(f, name);
-			Write($"ensure: '{name}' equals {value}.\n");
+			Write($"ensure: [{name}] equals [{value}]\n");
 			if (ctrl.Text != value?.ToString())
 				errors.Add(name, value, ctrl.Text);
 	};
@@ -135,7 +135,7 @@ public class Interpreter {
 			// Will be called on the next move.
 			asserts.Push(()=> {
 				Control ctrl = FindCtrlOrDie(target, name);
-				Write($"assert: '{name}' equals {value}.\n");
+				Write($"assert: [{name}] equals [value]\n");
 				if (ctrl.Text == value?.ToString())
 					Pass(ctrl);
 				else
@@ -173,7 +173,8 @@ public class Interpreter {
 			case "start:": 
 				if (!Start(f, errors)) // Can't start due to preconds errors.
 					return false;
-				break;
+				else
+					return Start(f, errors);
 			case "ensure:": 
 				DieIf(args.Length == 0, "[Ensure] name is required.");
 				DieIf(args.Length == 1, "[Ensure] value is required.");
