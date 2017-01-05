@@ -16,8 +16,8 @@ class Program {
 		const int LEFT = 20, LBLWIDTH = 50;
 
 		Control last, 
-				txtPrice, txtQty,  txtTot,// txtNet, txtTax,
-				lblPrice, lblQty,  lblTot; //lblNet, lblTax;
+				txtPrice, txtQty,  txtTot, txtNet, txtTax,
+				lblPrice, lblQty,  lblTot, lblNet, lblTax;
 
 		int left = LEFT + LBLWIDTH + 5;
 
@@ -33,6 +33,18 @@ class Program {
 		txtQty.Top  = GetTop(last);
 		txtQty.Left = left;
 		last        = txtQty;
+
+		txtNet      = new TextBox();
+		txtNet.Name = "net";
+		txtNet.Top  = GetTop(last);
+		txtNet.Left = left;
+		last        = txtNet;
+
+		txtTax      = new TextBox();
+		txtTax.Name = "tax";
+		txtTax.Top  = GetTop(last);
+		txtTax.Left = left;
+		last        = txtTax;
 
 		txtTot      = new TextBox();
 		txtTot.Name = "tot";
@@ -53,6 +65,18 @@ class Program {
 		lblQty.Top     = txtQty.Top;
 		lblQty.Width   = LBLWIDTH;
 
+		lblNet         = new Label();
+		lblNet.Text    = "Net:";
+		lblNet.Left    = LEFT;
+		lblNet.Top     = txtNet.Top;
+		lblNet.Width   = LBLWIDTH;
+
+		lblTax         = new Label();
+		lblTax.Text    = "Tax:";
+		lblTax.Left    = LEFT;
+		lblTax.Top     = txtTax.Top;
+		lblTax.Width   = LBLWIDTH;
+
 		lblTot         = new Label();
 		lblTot.Text    = "Total:";
 		lblTot.Left    = LEFT;
@@ -62,18 +86,26 @@ class Program {
 		// Add controls to the form.
 		f.Controls.Add(lblPrice);
 		f.Controls.Add(lblQty);
+		f.Controls.Add(lblNet);
+		f.Controls.Add(lblTax);
 		f.Controls.Add(lblTot);
 
 		f.Controls.Add(txtPrice);
 		f.Controls.Add(txtQty);
+		f.Controls.Add(txtNet);
+		f.Controls.Add(txtTax);
 		f.Controls.Add(txtTot);
 
 		// Handlers
 		Action<Control, Control> updateTot = (price, qty) => {
 			try {
-				int p = IsNullOrEmpty(price.Text) ? 0 : ToInt32(txtPrice.Text);
-				int q = IsNullOrEmpty(qty.Text)   ? 0 : ToInt32(qty.Text);
-				txtTot.Text = (p * q).ToString();
+				double p = IsNullOrEmpty(price.Text) ? 0d : ToDouble(txtPrice.Text);
+				double q = IsNullOrEmpty(qty.Text)   ? 0d : ToDouble(qty.Text);
+				double net =  p * q;
+				double tax =  net * 0.21;
+				txtNet.Text = net.ToString();
+				txtTax.Text = tax.ToString();
+				txtTot.Text = (net + tax).ToString();
 				// To test errors....
 				// txtTot.Text = "123";
 			}
@@ -87,7 +119,7 @@ class Program {
 		txtQty.LostFocus   += (s, e) => updateTot(txtPrice, txtQty);
 
 		f.Shown += (s, e) => {
-			txtPrice.Text = "123";	
+			txtPrice.Text = "100";	
 			txtQty.Text = "2";	
 			updateTot(txtPrice, txtQty);
 		};
