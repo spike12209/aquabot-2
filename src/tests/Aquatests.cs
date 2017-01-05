@@ -151,7 +151,7 @@ class Aquatests {
 		inter.Assert = (target, asserts, name, val) => counta++;
 
 		var f = new Form();
-		inter.Eval(src, f);
+		inter.Eval(src, f, true);
 
 		assert.Equal(2, countf); 
 		assert.Equal(2, countmv);

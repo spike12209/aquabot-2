@@ -104,7 +104,7 @@ public class Interpreter {
 	static void Fix(Form f, string name, string text) =>
 		FindCtrlOrDie(f, name).Text = text;
 
-	public bool Start (Form f, PreCondErrors errors) {
+	public bool Start (Form f, PreCondErrors errors, bool quiet) {
 		WriteLine($"Start errors count: {errors.Count}");
 
 		if (errors.Count  == 0)
@@ -113,7 +113,7 @@ public class Interpreter {
 		int fixes = 0;
 		for (int i = 0; i < errors.Count; ++i) {
 			var err = errors.At(i);
-			if (AutoFix(err)) {
+			if (quiet || AutoFix(err)) {
 				Fix(f, err.InputName, err.Expected?.ToString());
 				++fixes;
 			}
@@ -121,7 +121,7 @@ public class Interpreter {
 
 		if (fixes == errors.Count) {
 			errors.Clear();
-			return Start(f, errors);
+			return Start(f, errors, quiet);
 		}
 		return false;
 	}
@@ -153,7 +153,7 @@ public class Interpreter {
 	/// (It dies if the command doesn't exists).
 	/// Returns true if the command success, false otherwise.
 	bool DispatchCmd(Form f, Stack<Action> asserts, PreCondErrors errors,
-		   	string cmd, params string[] args) {
+			bool quiet, string cmd, params string[] args) {
 
 		DieIf(f == null, "Target form can't be null.");
 		DieIf(IsNullOrEmpty(cmd), "Cmd is required.");
@@ -177,10 +177,10 @@ public class Interpreter {
 				End();
 				break;
 			case "start:": 
-				if (!Start(f, errors)) // Can't start due to preconds errors.
+				if (!Start(f, errors, quiet)) // Can't start due to preconds errors.
 					return false;
 				else
-					return Start(f, errors);
+					return Start(f, errors, quiet);
 			case "ensure:": 
 				DieIf(args.Length == 0, "[Ensure] name is required.");
 				DieIf(args.Length == 1, "[Ensure] value is required.");
@@ -201,7 +201,7 @@ public class Interpreter {
 
 	/// Executes a line of the script.
 	bool Dispatch(string line, Form target, Stack<Action> asserts, 
-			PreCondErrors errors) {
+			PreCondErrors errors, bool quiet) {
 
 		var delim = new [] { ' ' };
 		var words = line.Split(delim, RemoveEmptyEntries);
@@ -209,11 +209,11 @@ public class Interpreter {
 			return true; //<= Empty line.
 
 		if (words.Length == 1)
-			return DispatchCmd(target, asserts, errors, words[0]);
+			return DispatchCmd(target, asserts, errors, quiet, words[0]);
 		else {
 			var args = new string[words.Length - 1];
 			Array.Copy(words, 1, args, 0, args.Length);
-			return DispatchCmd(target, asserts, errors, words[0], args);
+			return DispatchCmd(target, asserts, errors, quiet, words[0], args);
 		}
 	}
 
@@ -223,7 +223,7 @@ public class Interpreter {
 
 	/// Parses and executes a replay script.
 	/// It dies on syntax errors.
-	public void Eval(string script, Form target) {
+	public void Eval(string script, Form target, bool quiet) {
 		DieIf(IsNullOrEmpty(script), "Script can't be null or empty.");
 
 		script = CleanScript(script);
@@ -233,7 +233,7 @@ public class Interpreter {
 		string line = null;
 
 		while((line = reader.ReadLine()) != null)
-			if (!Dispatch(line, target, asserts, errors))
+			if (!Dispatch(line, target, asserts, errors, quiet))
 				break;
 	}
 }

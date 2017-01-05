@@ -1,1 +1,1 @@
-.\bin\aqua.exe
+.\bin\aqua.exe %1

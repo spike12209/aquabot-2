@@ -107,7 +107,7 @@ class Program {
 				txtTax.Text = tax.ToString();
 				txtTot.Text = (net + tax).ToString();
 				// To test errors....
-				// txtTot.Text = "123";
+				txtTot.Text = "123";
 			}
 			catch {
 				txtTot.Text = "#ERR";
@@ -132,10 +132,11 @@ class Program {
 	[STAThread]
 	static void Main(params string [] args) {
 		var f = new Form();
-
 		f.Text = "Test Form";
 		CreateCtrls(f);
-		Aquaforms.Watch(f);
+		bool quiet = args.Length >= 1 ? args[0] == "-q" : false;
+
+		Aquaforms.Watch(f, quiet);
 		Application.Run(f);
 	}
 

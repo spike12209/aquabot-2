@@ -107,10 +107,10 @@ public class Aquaforms {
 
 	/// Aqua's entry point. 
 	/// This method starts looking for changes, attach commands, and so on...
-	public static void Watch(Form f) {	
+	public static void Watch(Form f, bool quiet) {	
 
 		Lane lane = new Lane();
-		AquaCmds.AttachTo(f, lane);
+		AquaCmds.AttachTo(f, lane, quiet);
 
 		f.Shown += (s, e) => {
 			ValueStore values = Init(f, lane);

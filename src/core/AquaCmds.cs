@@ -22,8 +22,8 @@ class AquaCmds : Form {
 		REPLAY    = "Replay";
 
 	/// Attaches the aqua commands tool bar to the form under test.
-	public static void AttachTo(Form host, Lane lane) {
-		var cmds = new AquaCmds(host, lane);
+	public static void AttachTo(Form host, Lane lane, bool quiet) {
+		var cmds = new AquaCmds(host, lane, quiet);
 		cmds.Show();
 	}
 
@@ -66,10 +66,10 @@ class AquaCmds : Form {
 		Location = new Point(x, y);
 	}
 
-	static void Replay (string script, Form host) {
+	static void Replay (string script, Form host, bool quiet) {
 		try {
 			var inter = new Interpreter();
-			inter.Eval(script, host);
+			inter.Eval(script, host, quiet);
 		}
 		catch(Exception ex) {
 			MessageBox.Show(ex.Message);
@@ -98,7 +98,7 @@ class AquaCmds : Form {
 
 	/// host is the form under test.
 	/// lane is some sort of a timeline where changes and SE are reflected.
-	public AquaCmds(Form host, Lane lane) {
+	public AquaCmds(Form host, Lane lane, bool quiet) {
 		Text = "Aqua";
 		// Attach
 		// Owner = host;
@@ -125,7 +125,7 @@ class AquaCmds : Form {
 
 			var script = OpenScript();
 			btnRec.Enabled = false;
-			Replay(script, host);
+			Replay(script, host, quiet);
 		};
 
 		record = ()=> { 
