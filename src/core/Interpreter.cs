@@ -93,8 +93,10 @@ public class Interpreter {
 		return MessageBox.Show(msg, APPNAME, YesNo) == DialogResult.Yes;
 	}
 
-	public bool AutoFix(string inputName) {
-		return Confirm($"Autofix [{inputName}]?");
+	bool AutoFix(PreCondError err) {
+		DieIf(err == null, "Internal Error. Err can't be null.");
+		var msg = $"{err.ToString()}\nAutofix {err.InputName}?";
+		return Confirm(msg);
 	}
 
 	public Action End = () => { };
@@ -109,8 +111,7 @@ public class Interpreter {
 		int fixes = 0;
 		for (int i = 0; i < errors.Count; ++i) {
 			var err = errors.At(i);
-			MessageBox.Show(err.ToString());
-			if (AutoFix(err.InputName))
+			if (AutoFix(err))
 				Fix(f, err.InputName, err.Expected?.ToString());
 		}
 

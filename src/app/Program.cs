@@ -15,8 +15,8 @@ class Program {
 		const int LEFT = 20, LBLWIDTH = 50;
 
 		Control last, 
-				txtPrice, txtQty, txtNet, txtTax, txtTot, 
-				lblPrice, lblQty, lblNet, lblTax, lblTot;
+				txtPrice, txtQty,  txtTot,// txtNet, txtTax,
+				lblPrice, lblQty,  lblTot; //lblNet, lblTax;
 
 		int left = LEFT + LBLWIDTH + 5;
 
