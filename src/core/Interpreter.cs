@@ -22,11 +22,11 @@ public class Interpreter {
 		ctrl.BackColor = Color.Olive;
 	}
 
-	static void Fail(Control ctrl, object expected) {
+	static void Fail(Control c, object expected) {
 		//TODO: Tooltip showing the error when the user hovers over the control.
-		var msg = $"[{ctrl.Name}] - Expected [{expected}] was [{ctrl.Text}].";
+		var msg = $"[{c.Name}] failed. Expected: [{expected}]. Was: [{c.Text}].";
 		WriteLine(msg);
-		ctrl.BackColor = Color.Coral;
+		c.BackColor = Color.Coral;
 	}
 
 	/// Finds a "child" control into the target's controls collection.
@@ -95,7 +95,7 @@ public class Interpreter {
 
 	bool AutoFix(PreCondError err) {
 		DieIf(err == null, "Internal Error. Err can't be null.");
-		var msg = $"{err.ToString()}\nAutofix {err.InputName}?";
+		var msg = $"{err.ToString()}\nDo you want autofix it?";
 		return Confirm(msg);
 	}
 
@@ -105,19 +105,23 @@ public class Interpreter {
 		FindCtrlOrDie(f, name).Text = text;
 
 	public bool Start (Form f, PreCondErrors errors) {
+		WriteLine($"Start errors count: {errors.Count}");
+
 		if (errors.Count  == 0)
 			return true;
 
 		int fixes = 0;
 		for (int i = 0; i < errors.Count; ++i) {
 			var err = errors.At(i);
-			if (AutoFix(err))
+			if (AutoFix(err)) {
 				Fix(f, err.InputName, err.Expected?.ToString());
+				++fixes;
+			}
 		}
 
 		if (fixes == errors.Count) {
 			errors.Clear();
-			Start(f, errors);
+			return Start(f, errors);
 		}
 		return false;
 	}

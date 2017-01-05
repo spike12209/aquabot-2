@@ -17,8 +17,8 @@ public class PreCondError {
 	}
 
 	public override string ToString() =>
-		$"Fail precondition for [{InputName}].\n" +
-	   	$"Expected '{Expected}' was '{Actual}'.";
+		$"Pre-condition failed for [{InputName}]. " +
+	   	$"Expected [{Expected}]. Was [{Actual}].";
 } 
 
 /// Precondition errors.
@@ -76,6 +76,7 @@ public class PreCondErrors {
 
 	public void Clear() {
 		// TODO: Dispose each itemb before 'nulling' Head.
-		Head = null;
+		Head  = null;
+		Count = 0;
 	}
 }
