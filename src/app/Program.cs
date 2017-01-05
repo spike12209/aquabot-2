@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows.Forms;
 
 using static System.Convert;
@@ -90,6 +91,10 @@ class Program {
 			txtQty.Text = "2";	
 			updateTot(txtPrice, txtQty);
 		};
+
+		var txts = (from c in f.Controls.OfType<TextBox>() select c).ToArray();
+		foreach(var txt in txts)
+			txt.TextAlign = HorizontalAlignment.Right;
 	}
 
 	[STAThread]
