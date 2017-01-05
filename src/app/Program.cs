@@ -99,10 +99,10 @@ class Program {
 		// Handlers
 		Action<Control, Control> updateTot = (price, qty) => {
 			try {
-				double p = IsNullOrEmpty(price.Text) ? 0d : ToDouble(txtPrice.Text);
-				double q = IsNullOrEmpty(qty.Text)   ? 0d : ToDouble(qty.Text);
-				double net =  p * q;
-				double tax =  net * 0.21;
+				double p    = IsNullOrEmpty(price.Text) ? 0d : ToDouble(txtPrice.Text);
+				double q    = IsNullOrEmpty(qty.Text)   ? 0d : ToDouble(qty.Text);
+				double net  = p * q;
+				double tax  = net * 0.21;
 				txtNet.Text = net.ToString();
 				txtTax.Text = tax.ToString();
 				txtTot.Text = (net + tax).ToString();
