@@ -69,7 +69,7 @@ public class Interpreter {
 		Write($"move: (from [{target.ActiveControl.Name}])\n");
 		SendKeys.Send(TAB);
 
-		Thread.Sleep(500);
+		Thread.Sleep(100);
 		// Are there any pending assertion?
 		while (asserts.Count > 0)
 			asserts.Pop()();
@@ -140,6 +140,7 @@ public class Interpreter {
 			// Will be called on the next move.
 			asserts.Push(()=> {
 				Control ctrl = FindCtrlOrDie(target, name);
+				ctrl.Focus();
 				Write($"assert: [{name}] equals [value]\n");
 				if (ctrl.Text == value?.ToString())
 					Pass(ctrl);
