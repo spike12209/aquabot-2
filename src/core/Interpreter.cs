@@ -18,6 +18,8 @@ public class Interpreter {
 		APPNAME = "AquaForms",
 		TAB = "{TAB}";
 
+	static ToolTip ErrToolTip = new ToolTip();
+
 	static void Pass(Control ctrl) {
 		ctrl.BackColor = Color.Olive;
 	}
@@ -27,6 +29,9 @@ public class Interpreter {
 		var msg = $"[{c.Name}] failed. Expected: [{expected}]. Was: [{c.Text}].";
 		WriteLine(msg);
 		c.BackColor = Color.Coral;
+		ErrToolTip.Show(msg, c);
+
+		c.DoubleClick += (s,e) => ErrToolTip.Hide((Control)s);
 	}
 
 	/// Finds a "child" control into the target's controls collection.
