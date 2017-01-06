@@ -136,7 +136,7 @@ class Program {
 		CreateCtrls(f);
 		bool quiet = args.Length >= 1 ? args[0] == "-q" : false;
 
-		Aquaforms.Watch(f, quiet);
+		Aquabot.Watch(f, quiet);
 		Application.Run(f);
 	}
 

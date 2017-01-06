@@ -8,7 +8,7 @@ using static Parca;
 using static ConditionalHelpers;
 
 /// This class tracks controls changes on a given form.
-public class Aquaforms {
+public class Aquabot {
 
 	/// Takes the first snapshot, which is a picture of the whole form.
 	static void FirstSnapshot(Control ctrl, ValueStore values, Lane lane) {
@@ -97,7 +97,7 @@ public class Aquaforms {
 	static void HookCtrls(Form f, ValueStore values, Lane lane) =>
 		HookCtrls(f, f, values, lane);
 
-	/// Initializes Aquaforms. Basically, it hooks controls 
+	/// Initializes Aquabot. Basically, it hooks controls 
 	/// and creates the value storage database to track controls changes.
 	static ValueStore Init(Form f, Lane lane) {
 		ValueStore values = new ValueStore();
