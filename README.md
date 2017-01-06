@@ -10,6 +10,7 @@ the user input and create the testing script; and the **replay phase** that
 executes the testing script one step at a time. 
 During the record phase the user can flag errors and add notes on the go.
 
+[You can see an early prototype in action in this video](https://www.youtube.com/watch?v=7Fj783CERgQ)
 
 ## Record phase
 Before start recording we must tell **aquabot** which form to wacth. This is
@@ -79,10 +80,10 @@ you called Aqua.Watch, the behaviour is undefined. So don't do that.
 While you can take **aquabot** for a spin, keep in mind that is **not** fully 
 functional yet. Stay tuned.
 
-# How to build
+## How to build
 On unix systems you can build the library by runing **make**.
 
 On Windows, run **build.bat**.
 
-# How to report bugs
+## How to report bugs
 TODO:
